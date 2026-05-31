@@ -14,6 +14,7 @@ namespace ZM.RideService.Api.Infrastructure.Extensions
             RegisterCarter(services);
             RegisterUnitOfWorks(services);
             RegisterDateTimeProviders(services);
+            RegisterQueries(services);
             RegisterRepositories(services);
         }
 
@@ -48,6 +49,15 @@ namespace ZM.RideService.Api.Infrastructure.Extensions
             services.Scan(scan => scan
                 .FromAssemblyOf<RideRepository>()
                 .AddClasses(classes => classes.Where(c => c.Name.EndsWith("DateTimeProvider")))
+                .AsMatchingInterface()
+                .WithScopedLifetime());
+        }
+
+        private static void RegisterQueries(IServiceCollection services)
+        {
+            services.Scan(scan => scan
+                .FromAssemblyOf<RideRepository>()
+                .AddClasses(classes => classes.Where(c => c.Name.EndsWith("Query")))
                 .AsMatchingInterface()
                 .WithScopedLifetime());
         }
