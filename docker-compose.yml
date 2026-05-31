@@ -1,0 +1,21 @@
+services:
+  zm.rideservice.api:
+    image: ${DOCKER_REGISTRY-}zmrideserviceapi
+    build:
+      context: .
+      dockerfile: ZM.RideService.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:5000
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    networks:
+      - proxybackend
+
+
+
+networks:
+  proxybackend:
+    name: proxybackend
+    driver: bridge
