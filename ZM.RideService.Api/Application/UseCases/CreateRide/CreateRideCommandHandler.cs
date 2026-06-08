@@ -22,7 +22,13 @@ namespace ZM.RideService.Api.Application.UseCases.CreateRide
 
         public async Task<Result> Handle(CreateRideCommand request, CancellationToken cancellationToken)
         {
-            var ride = Ride.Create(request.RiderId, request.PickupLocation, request.DestinationLocation, _dateTimeProvider.UtcNow);
+            var ride = Ride.Create(
+                Guid.NewGuid(),
+                request.RiderId, 
+                request.PickupLocation,
+                request.DestinationLocation, 
+                _dateTimeProvider.UtcNow);
+
             await _rideRepository.CreateRideAsync(ride, cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

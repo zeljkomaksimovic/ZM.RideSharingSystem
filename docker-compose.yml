@@ -13,9 +13,25 @@ services:
     networks:
       - proxybackend
 
-
+  mqbroker:
+    image: rabbitmq:3-management
+    container_name: MQueue
+    hostname: distributedsys-mq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+     - "15672:15672"
+     - "5672:5672"
+    volumes:
+      - mqvolume:/var/lib/rabbitmq
+    networks: 
+      - proxybackend
 
 networks:
   proxybackend:
     name: proxybackend
     driver: bridge
+
+volumes:
+  mqvolume:

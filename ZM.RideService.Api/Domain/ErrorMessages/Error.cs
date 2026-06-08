@@ -1,4 +1,4 @@
-﻿namespace ZM.RideService.Api.Domain.Errors
+﻿namespace ZM.RideService.Api.Domain.ErrorMessages
 {
     public class Error
     {

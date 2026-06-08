@@ -1,5 +1,7 @@
 ﻿#nullable disable
-namespace ZM.RideService.Api.Persistance.Models
+using ZM.RideService.Api.Domain.Enums;
+
+namespace ZM.RideService.Api.Persistence.Models
 {
     public class Ride
     {
@@ -12,7 +14,7 @@ namespace ZM.RideService.Api.Persistance.Models
         public double DestinationLatitude { get; set; }
         public double DestinationLongitude { get; set; }
         public string DestinationAddress { get; set; }
-        public int Status { get; set; }
+        public RideStatus Status { get; set; }
         public decimal? EstimatedFare { get; set; }
         public decimal? ActualFare { get; set; }
         public DateTime CreatedAtUtc { get; set; }

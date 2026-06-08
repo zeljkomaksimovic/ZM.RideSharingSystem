@@ -1,7 +1,8 @@
 ﻿using Carter;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using ZM.RideService.Api.Persistance;
-using ZM.RideService.Api.Persistance.Repositories;
+using ZM.RideService.Api.Persistence;
+using ZM.RideService.Api.Persistence.Repositories;
 
 namespace ZM.RideService.Api.Infrastructure.Extensions
 {
@@ -11,6 +12,7 @@ namespace ZM.RideService.Api.Infrastructure.Extensions
         {
             RegisterEntityFramework(services);
             RegisterMediatR(services);
+            RegisterMassTransit(services, configuration);
             RegisterCarter(services);
             RegisterUnitOfWorks(services);
             RegisterDateTimeProviders(services);
@@ -28,6 +30,25 @@ namespace ZM.RideService.Api.Infrastructure.Extensions
         private static void RegisterMediatR(IServiceCollection services)
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RideRepository).Assembly));
+        }
+
+        private static void RegisterMassTransit(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddMassTransit(busConfigurator =>
+            {
+                busConfigurator.SetKebabCaseEndpointNameFormatter();
+
+                busConfigurator.UsingRabbitMq((context, configurator) =>
+                {
+                    configurator.Host(new Uri(configuration["MessageBroker:Host"]!), h =>
+                    {
+                        h.Username(configuration["MessageBroker:Username"]!);
+                        h.Password(configuration["MessageBroker:Password"]!);
+                    });
+
+                    configurator.ConfigureEndpoints(context);
+                });
+            });
         }
 
         private static void RegisterCarter(IServiceCollection services)

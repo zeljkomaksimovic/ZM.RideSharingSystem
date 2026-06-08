@@ -1,6 +1,6 @@
 ﻿#nullable disable
 
-using ZM.RideService.Api.Domain.Errors;
+using ZM.RideService.Api.Domain.ErrorMessages;
 
 namespace ZM.RideService.Api.Domain.OperationResult
 {

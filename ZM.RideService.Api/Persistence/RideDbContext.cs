@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace ZM.RideService.Api.Persistance
+namespace ZM.RideService.Api.Persistence
 {
     public class RideDbContext : DbContext
     {
@@ -15,5 +15,6 @@ namespace ZM.RideService.Api.Persistance
         }
 
         public DbSet<Models.Ride> Rides { get; set; }
+        public DbSet<Outbox.OutboxMessage> OutboxMessages { get; set; }
     }
 }

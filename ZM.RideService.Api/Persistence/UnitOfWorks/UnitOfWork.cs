@@ -2,7 +2,7 @@
 using System.Data;
 using ZM.RideService.Api.Application.UnitOfWork;
 
-namespace ZM.RideService.Api.Persistance.UnitOfWorks
+namespace ZM.RideService.Api.Persistence.UnitOfWorks
 {
     public class UnitOfWork : IUnitOfWork
     {
