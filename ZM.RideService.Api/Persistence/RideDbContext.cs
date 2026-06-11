@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ZM.RideService.Api.Persistence.Idempotence;
+using ZM.RideService.Api.Persistence.Models;
+using ZM.RideService.Api.Persistence.Outbox;
 
 namespace ZM.RideService.Api.Persistence
 {
@@ -14,7 +17,8 @@ namespace ZM.RideService.Api.Persistence
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(RideDbContext).Assembly);
         }
 
-        public DbSet<Models.Ride> Rides { get; set; }
-        public DbSet<Outbox.OutboxMessage> OutboxMessages { get; set; }
+        public DbSet<Ride> Rides { get; set; }
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
+        public DbSet<ProcessedMessage> ProcessedMessages { get; set; }
     }
 }

@@ -121,6 +121,8 @@ namespace ZM.RideService.Api.Domain.Entities
             ride.ActualFare = actualFare;
             ride.CompletedAtUtc = completedAtUtc;
 
+            ride.Raise(new RideCompletedDomainEvent(ride.Id));
+
             return Result.Success();
         }
 
