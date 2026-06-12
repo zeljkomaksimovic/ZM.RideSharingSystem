@@ -1,7 +1,7 @@
 ﻿#nullable disable
 using ZM.DriverService.Api.Domain.Enums;
 
-namespace ZM.RideService.Api.Persistence.Models
+namespace ZM.DriverService.Api.Persistence.Models
 {
     public class Driver
     {

@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using System.Data;
+﻿using System.Data;
+using Microsoft.EntityFrameworkCore.Storage;
 using ZM.DriverService.Api.Application.UnitOfWork;
 
 namespace ZM.DriverService.Api.Persistence.UnitOfWorks

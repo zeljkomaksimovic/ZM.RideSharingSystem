@@ -23,8 +23,6 @@ namespace ZM.RideService.Api.Persistence.Repositories
             dbRide!.DriverId = ride.DriverId;
             dbRide.Status = ride.Status;
             dbRide.AssignedAtUtc = ride.AssignedAtUtc;
-
-            _dbContext.Update(dbRide);
         }
 
         public async Task CancelRideAsync(Ride ride, CancellationToken cancellationToken = default)
@@ -35,8 +33,6 @@ namespace ZM.RideService.Api.Persistence.Repositories
 
             dbRide!.Status = ride.Status;
             dbRide.CancelledAtUtc = ride.CancelledAtUtc;
-
-            _dbContext.Update(dbRide);
         }
 
         public async Task CompleteRideAsync(Ride ride, CancellationToken cancellationToken = default)
@@ -48,8 +44,6 @@ namespace ZM.RideService.Api.Persistence.Repositories
             dbRide!.Status = ride.Status;
             dbRide.ActualFare = ride.ActualFare;
             dbRide.CompletedAtUtc = ride.CompletedAtUtc;
-
-            _dbContext.Update(dbRide);
         }
 
         public async Task CreateRideAsync(Ride ride, CancellationToken cancellationToken = default)
@@ -102,8 +96,6 @@ namespace ZM.RideService.Api.Persistence.Repositories
 
             dbRide!.Status = ride.Status;
             dbRide.StartedAtUtc = ride.StartedAtUtc;
-
-            _dbContext.Update(dbRide);
         }
     }
 }

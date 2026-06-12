@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ZM.DriverService.Api.Persistence.Idempotence;
+using ZM.DriverService.Api.Persistence.Models;
 
 namespace ZM.DriverService.Api.Persistence
 {
