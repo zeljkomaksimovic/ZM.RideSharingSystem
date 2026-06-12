@@ -3,5 +3,6 @@
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>
+  <Project Path="ZM.DriverService.Api/ZM.DriverService.Api.csproj" Id="7fbc3ec9-9598-49e3-9c4a-ca307bd18a6d" />
   <Project Path="ZM.RideService.Api/ZM.RideService.Api.csproj" />
 </Solution>

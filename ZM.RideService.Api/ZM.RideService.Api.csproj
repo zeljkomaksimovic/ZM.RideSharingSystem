@@ -37,8 +37,4 @@
     <ProjectReference Include="..\..\ZM.RideSharingSystem.Contracts\ZM.RideSharingSystem.Contracts.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Infrastructure\Outbox\" />
-  </ItemGroup>
-
 </Project>
