@@ -29,7 +29,7 @@ namespace ZM.RideService.Api.Application.UseCases.AssignDriver
                 return Result.Failure(Errors.Ride.RideNotFound());
             }
 
-            var assignDriverResult = Ride.AssignDriver(ride, request.DriverId, _dateTimeProvider.UtcNow);
+            var assignDriverResult = ride.AssignDriver(request.DriverId, _dateTimeProvider.UtcNow);
             if (assignDriverResult.IsSuccessful is false)
             {
                 return assignDriverResult;

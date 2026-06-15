@@ -29,7 +29,7 @@ namespace ZM.RideService.Api.Application.UseCases.CompleteRide
                 return Result.Failure(Errors.Ride.RideNotFound());
             }
 
-            var completeRideResult = Ride.CompleteRide(ride, request.ActualFare, _dateTimeProvider.UtcNow);
+            var completeRideResult = ride.CompleteRide(request.ActualFare, _dateTimeProvider.UtcNow);
             if (completeRideResult.IsSuccessful is false)
             {
                 return completeRideResult;

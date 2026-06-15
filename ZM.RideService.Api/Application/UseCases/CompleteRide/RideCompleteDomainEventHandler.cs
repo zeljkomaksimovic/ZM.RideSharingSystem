@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using MediatR;
 using ZM.RideService.Api.Domain.Events;
-using ZM.RideSharingSystem.Contracts.Commands;
+using ZM.RideSharingSystem.Contracts.Commands.Notification;
 using ZM.RideSharingSystem.Contracts.Events;
 
 namespace ZM.RideService.Api.Application.UseCases.CompleteRide

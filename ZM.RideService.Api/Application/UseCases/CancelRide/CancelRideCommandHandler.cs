@@ -29,7 +29,7 @@ namespace ZM.RideService.Api.Application.UseCases.CancelRide
                 return Result.Failure(Errors.Ride.RideNotFound());
             }
 
-            var cancelRideResult = Ride.CancelRide(ride, _dateTimeProvider.UtcNow);
+            var cancelRideResult = ride.CancelRide(_dateTimeProvider.UtcNow);
             if (cancelRideResult.IsSuccessful is false)
             {
                 return cancelRideResult;

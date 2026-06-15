@@ -1,6 +1,10 @@
 ﻿#nullable disable
 using MassTransit;
 using ZM.RideSharingSystem.Contracts.Commands;
+using ZM.RideSharingSystem.Contracts.Commands.Matching;
+using ZM.RideSharingSystem.Contracts.Commands.Notification;
+using ZM.RideSharingSystem.Contracts.Commands.Payment;
+using ZM.RideSharingSystem.Contracts.Commands.Ride;
 using ZM.RideSharingSystem.Contracts.Events;
 
 namespace ZM.RideService.Api.Infrastructure.Sagas.RideCreated
@@ -25,6 +29,10 @@ namespace ZM.RideService.Api.Infrastructure.Sagas.RideCreated
             InstanceState(x => x.CurrentState);
 
             Event(() => RideCreated, e => e.CorrelateById(m => m.Message.RideId));
+            Event(() => DriverMatched, e => e.CorrelateById(m => m.Message.RideId));
+            Event(() => DriverAssigned, e => e.CorrelateById(m => m.Message.RideId));
+            Event(() => RideCompleted, e => e.CorrelateById(m => m.Message.RideId));
+            Event(() => PaymentCompleted, e => e.CorrelateById(m => m.Message.RideId));
 
             Initially(
                 When(RideCreated)

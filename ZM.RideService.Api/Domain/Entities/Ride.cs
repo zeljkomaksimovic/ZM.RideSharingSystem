@@ -83,58 +83,58 @@ namespace ZM.RideService.Api.Domain.Entities
             return ride;
         }
 
-        public static Result AssignDriver(Ride ride, Guid driverId, DateTime assignedAtUtc)
+        public Result AssignDriver(Guid driverId, DateTime assignedAtUtc)
         {
-            if (ride.Status != RideStatus.Requested)
+            if (Status != RideStatus.Requested)
             {
                 return Result.Failure(Errors.Ride.DriverCouldNotBeAssigned());
             }
 
-            ride.DriverId = driverId;
-            ride.Status = RideStatus.DriverAssigned;
-            ride.AssignedAtUtc = assignedAtUtc;
+            DriverId = driverId;
+            Status = RideStatus.DriverAssigned;
+            AssignedAtUtc = assignedAtUtc;
 
             return Result.Success();
         }
 
-        public static Result StartRide(Ride ride, DateTime startedAtUtc)
+        public Result StartRide(DateTime startedAtUtc)
         {
-            if (ride.Status != RideStatus.DriverAssigned)
+            if (Status != RideStatus.DriverAssigned)
             {
                 return Result.Failure(Errors.Ride.DriverIsNotAssigned());
             }
 
-            ride.Status = RideStatus.InProgress;
-            ride.StartedAtUtc = startedAtUtc;
+            Status = RideStatus.InProgress;
+            StartedAtUtc = startedAtUtc;
 
             return Result.Success();
         }
 
-        public static Result CompleteRide(Ride ride, decimal actualFare, DateTime completedAtUtc)
+        public Result CompleteRide(decimal actualFare, DateTime completedAtUtc)
         {
-            if (ride.Status != RideStatus.InProgress)
+            if (Status != RideStatus.InProgress)
             {
                 return Result.Failure(Errors.Ride.RideIsNotInProgress());
             }
 
-            ride.Status = RideStatus.Completed;
-            ride.ActualFare = actualFare;
-            ride.CompletedAtUtc = completedAtUtc;
+            Status = RideStatus.Completed;
+            ActualFare = actualFare;
+            CompletedAtUtc = completedAtUtc;
 
-            ride.Raise(new RideCompletedDomainEvent(ride.Id));
+            Raise(new RideCompletedDomainEvent(Id));
 
             return Result.Success();
         }
 
-        public static Result CancelRide(Ride ride, DateTime cancelledAtUtc)
+        public Result CancelRide(DateTime cancelledAtUtc)
         {
-            if (ride.Status == RideStatus.Completed)
+            if (Status == RideStatus.Completed)
             {
                 return Result.Failure(Errors.Ride.RideCannotBeCancelled());
             }
 
-            ride.Status = RideStatus.Cancelled;
-            ride.CancelledAtUtc = cancelledAtUtc;
+            Status = RideStatus.Cancelled;
+            CancelledAtUtc = cancelledAtUtc;
 
             return Result.Success();
         }

@@ -24,8 +24,8 @@ namespace ZM.DriverService.Api.Persistence.Repositories
                 LastName = driver.LastName,
                 Email = driver.Email,
                 PhoneNumber = driver.PhoneNumber,
-                CurrentLatitude = driver.CurrentLocation.Latitude,
-                CurrentLongitude = driver.CurrentLocation.Longitude,
+                CurrentLatitude = driver.CurrentLocation?.Latitude,
+                CurrentLongitude = driver.CurrentLocation?.Longitude,
                 Status = driver.Status,
                 CreatedAtUtc = driver.CreatedAtUtc,
                 LastLocationUpdateAtUtc = driver.LastLocationUpdateAtUtc,
@@ -45,7 +45,8 @@ namespace ZM.DriverService.Api.Persistence.Repositories
                     d.LastName,
                     d.Email,
                     d.PhoneNumber,
-                    new DriverLocation(d.CurrentLatitude, d.CurrentLongitude),
+                    d.CurrentLatitude.HasValue && d.CurrentLongitude.HasValue ?
+                        new DriverLocation(d.CurrentLatitude.Value, d.CurrentLongitude.Value) : null,
                     d.Status,
                     d.CreatedAtUtc,
                     d.LastLocationUpdateAtUtc,
@@ -71,8 +72,8 @@ namespace ZM.DriverService.Api.Persistence.Repositories
             dbDriver.LastName = driver.LastName;
             dbDriver.Email = driver.Email;
             dbDriver.PhoneNumber = driver.PhoneNumber;
-            dbDriver.CurrentLatitude = driver.CurrentLocation.Latitude;
-            dbDriver.CurrentLongitude = driver.CurrentLocation.Longitude;
+            dbDriver.CurrentLatitude = driver.CurrentLocation?.Latitude;
+            dbDriver.CurrentLongitude = driver.CurrentLocation?.Longitude;
             dbDriver.Status = driver.Status;
             dbDriver.LastLocationUpdateAtUtc = driver.LastLocationUpdateAtUtc;
             dbDriver.LastStatusChangeAtUtc = driver.LastStatusChangeAtUtc;
@@ -91,7 +92,8 @@ namespace ZM.DriverService.Api.Persistence.Repositories
                     d.LastName,
                     d.Email,
                     d.PhoneNumber,
-                    new DriverLocation(d.CurrentLatitude, d.CurrentLongitude),
+                    d.CurrentLatitude.HasValue && d.CurrentLongitude.HasValue ?
+                        new DriverLocation(d.CurrentLatitude.Value, d.CurrentLongitude.Value) : null,
                     d.Status,
                     d.CreatedAtUtc,
                     d.LastLocationUpdateAtUtc,

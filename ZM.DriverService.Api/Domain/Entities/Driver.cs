@@ -17,7 +17,7 @@ namespace ZM.DriverService.Api.Domain.Entities
             string lastName,
             string email,
             string phoneNumber,
-            DriverLocation currentLocation,
+            DriverLocation? currentLocation,
             DriverStatus status,
             DateTime createdAtUtc)
         {
@@ -36,18 +36,19 @@ namespace ZM.DriverService.Api.Domain.Entities
         public string LastName { get; private set; }
         public string Email { get; private set; }
         public string PhoneNumber { get; private set; }
-        public DriverLocation CurrentLocation { get; private set; }
+        public DriverLocation? CurrentLocation { get; private set; }
         public DriverStatus Status { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public DateTime? LastLocationUpdateAtUtc { get; private set; }
         public DateTime? LastStatusChangeAtUtc { get; private set; }
+
         public static Driver Create(
             Guid id,
             string firstName,
             string lastName,
             string email,
             string phoneNumber,
-            DriverLocation currentLocation,
+            DriverLocation? currentLocation,
             DateTime createdAtUtc)
         {
             return new Driver(
@@ -138,7 +139,7 @@ namespace ZM.DriverService.Api.Domain.Entities
             string lastName,
             string email,
             string phoneNumber,
-            DriverLocation currentLocation,
+            DriverLocation? currentLocation,
             DriverStatus status,
             DateTime createdAtUtc,
             DateTime? lastLocationUpdateAtUtc,
