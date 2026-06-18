@@ -1,7 +1,6 @@
 ﻿using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using ZM.RideService.Api.Application.UseCases.AssignDriver;
 using ZM.RideService.Api.Persistence;
 using ZM.RideService.Api.Persistence.Idempotence;
 using ZM.RideSharingSystem.Contracts.Commands.Ride;
@@ -9,24 +8,24 @@ using ZM.RideSharingSystem.Contracts.Commands.Ride;
 
 namespace ZM.RideService.Api.Infrastructure.Consumers
 {
-    public class AssignDriverConsumer : IConsumer<AssignDriverToRideCommand>
+    public class CompleteRideConsumer : IConsumer<CompleteRideCommand>
     {
-        private readonly ILogger<AssignDriverConsumer> _logger;
+        private readonly ILogger<CompleteRideConsumer> _logger;
         private readonly ISender _sender;
         private readonly RideDbContext _dbContext;
 
-        public AssignDriverConsumer(ILogger<AssignDriverConsumer> logger, ISender sender, RideDbContext dbContext)
+        public CompleteRideConsumer(ILogger<CompleteRideConsumer> logger, ISender sender, RideDbContext dbContext)
         {
             _logger = logger;
             _sender = sender;
             _dbContext = dbContext;
         }
 
-        public async Task Consume(ConsumeContext<AssignDriverToRideCommand> context)
+        public async Task Consume(ConsumeContext<CompleteRideCommand> context)
         {
             if (await _dbContext.ProcessedMessages.AnyAsync(p =>
                     p.MessageId == context.MessageId &&
-                    p.ConsumerName == nameof(AssignDriverConsumer),
+                    p.ConsumerName == nameof(CompleteRideConsumer),
                     context.CancellationToken))
             {
                 return;
@@ -40,13 +39,12 @@ namespace ZM.RideService.Api.Infrastructure.Consumers
                 await _dbContext.ProcessedMessages.AddAsync(new ProcessedMessage
                 {
                     MessageId = context.MessageId,
-                    ConsumerName = nameof(AssignDriverConsumer),
+                    ConsumerName = nameof(CompleteRideConsumer),
                     CreatedAtUtc = DateTime.UtcNow
                 }, context.CancellationToken);
 
-                await _sender.Send(new AssignDriverCommand(
-                    context.Message.RideId,
-                    context.Message.DriverId),
+                await _sender.Send(new Application.UseCases.CompleteRide.CompleteRideCommand(
+                    context.Message.RideId),
                     context.CancellationToken);
 
                 //await _unitOfWork.CommitAsync(context.CancellationToken);
@@ -54,7 +52,7 @@ namespace ZM.RideService.Api.Infrastructure.Consumers
             catch (Exception ex)
             {
                 //await _unitOfWork.RollbackAsync(context.CancellationToken);
-                _logger.LogError(ex, $"Error processing {nameof(AssignDriverConsumer)} with MessageId: {context.MessageId}");
+                _logger.LogError(ex, $"Error processing {nameof(CompleteRideConsumer)} with MessageId: {context.MessageId}");
             }
         }
     }

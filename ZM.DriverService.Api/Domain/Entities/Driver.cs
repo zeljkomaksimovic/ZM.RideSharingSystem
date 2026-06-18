@@ -36,6 +36,7 @@ namespace ZM.DriverService.Api.Domain.Entities
         public string LastName { get; private set; }
         public string Email { get; private set; }
         public string PhoneNumber { get; private set; }
+        public Guid? CurrentRideId { get; private set; }
         public DriverLocation? CurrentLocation { get; private set; }
         public DriverStatus Status { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
@@ -88,13 +89,14 @@ namespace ZM.DriverService.Api.Domain.Entities
             return Result.Success();
         }
 
-        public Result AssignRide(DateTime assignedAtUtc)
+        public Result AssignRide(Guid rideId, DateTime assignedAtUtc)
         {
             if (Status != DriverStatus.Available)
             {
                 return Result.Failure(Errors.Driver.DriverMustBeAvailable());
             }
 
+            CurrentRideId = rideId;
             Status = DriverStatus.Assigned;
             LastStatusChangeAtUtc = assignedAtUtc;
 
@@ -121,6 +123,7 @@ namespace ZM.DriverService.Api.Domain.Entities
                 return Result.Failure(Errors.Driver.DriverMustBeInRide());
             }
 
+            CurrentRideId = null;
             Status = DriverStatus.Available;
             LastStatusChangeAtUtc = completedAtUtc;
 

@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Consumers\" />
+    <ProjectReference Include="..\..\ZM.RideSharingSystem.Contracts\ZM.RideSharingSystem.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

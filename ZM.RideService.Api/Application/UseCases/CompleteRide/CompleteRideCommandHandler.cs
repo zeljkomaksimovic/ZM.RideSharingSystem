@@ -29,7 +29,8 @@ namespace ZM.RideService.Api.Application.UseCases.CompleteRide
                 return Result.Failure(Errors.Ride.RideNotFound());
             }
 
-            var completeRideResult = ride.CompleteRide(request.ActualFare, _dateTimeProvider.UtcNow);
+            //TODO: Add calculation for the ride cost and update the ride entity with the cost before completing the ride.
+            var completeRideResult = ride.CompleteRide(0, _dateTimeProvider.UtcNow);
             if (completeRideResult.IsSuccessful is false)
             {
                 return completeRideResult;

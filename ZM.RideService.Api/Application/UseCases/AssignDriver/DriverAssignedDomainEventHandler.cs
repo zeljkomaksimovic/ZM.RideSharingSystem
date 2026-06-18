@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using MediatR;
 using ZM.RideService.Api.Domain.Events;
-using ZM.RideSharingSystem.Contracts.Commands.Notification;
+using ZM.RideSharingSystem.Contracts.Events;
 
 namespace ZM.RideService.Api.Application.UseCases.AssignDriver
 {
@@ -16,7 +16,7 @@ namespace ZM.RideService.Api.Application.UseCases.AssignDriver
 
         public async Task Handle(DriverAssignedDomainEvent notification, CancellationToken cancellationToken)
         {
-            await _bus.Publish(new DriverAssignedNotificationCommand(notification.RideId, notification.DriverId), cancellationToken);
+            await _bus.Publish(new DriverAssignedEvent(notification.RideId, notification.DriverId), cancellationToken);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿#nullable disable
 using MassTransit;
-using ZM.RideSharingSystem.Contracts.Commands;
+using ZM.RideSharingSystem.Contracts.Commands.Driver;
 using ZM.RideSharingSystem.Contracts.Commands.Matching;
 using ZM.RideSharingSystem.Contracts.Commands.Notification;
 using ZM.RideSharingSystem.Contracts.Commands.Payment;
@@ -50,7 +50,7 @@ namespace ZM.RideService.Api.Infrastructure.Sagas.RideCreated
                     context.Saga.DriverMatched = true;
                 })
                 .TransitionTo(AwaitingDriverAssignment)
-                .Publish(context => new AssignDriverCommand(context.Message.RideId, context.Message.DriverId)));
+                .Publish(context => new AssignDriverToRideCommand(context.Message.RideId, context.Message.DriverId)));
 
             During(AwaitingDriverAssignment,
                 When(DriverAssigned)
@@ -58,7 +58,8 @@ namespace ZM.RideService.Api.Infrastructure.Sagas.RideCreated
                 {
                     context.Saga.DriverAssigned = true;
                 })
-                .TransitionTo(AwaitingRideCompletion));
+                .TransitionTo(AwaitingRideCompletion)
+                .Publish(context => new CompleteRideCommand(context.Message.RideId)));
 
             During(AwaitingRideCompletion,
                 When(RideCompleted)

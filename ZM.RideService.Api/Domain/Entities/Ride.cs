@@ -94,6 +94,8 @@ namespace ZM.RideService.Api.Domain.Entities
             Status = RideStatus.DriverAssigned;
             AssignedAtUtc = assignedAtUtc;
 
+            Raise(new DriverAssignedDomainEvent(Id, driverId));
+
             return Result.Success();
         }
 

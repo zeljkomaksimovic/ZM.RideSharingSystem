@@ -1,32 +1,31 @@
-﻿using MassTransit;
+﻿using Microsoft.EntityFrameworkCore;
+using MassTransit;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using ZM.RideService.Api.Application.UseCases.AssignDriver;
-using ZM.RideService.Api.Persistence;
-using ZM.RideService.Api.Persistence.Idempotence;
-using ZM.RideSharingSystem.Contracts.Commands.Ride;
+using ZM.DriverService.Api.Persistence;
+using ZM.DriverService.Api.Persistence.Idempotence;
+using ZM.RideSharingSystem.Contracts.Commands.Driver;
+using ZM.DriverService.Api.Application.UseCases.AssignRide;
 
-
-namespace ZM.RideService.Api.Infrastructure.Consumers
+namespace ZM.DriverService.Api.Infrastructure.Consumers
 {
-    public class AssignDriverConsumer : IConsumer<AssignDriverToRideCommand>
+    public class AssignRideToDriverConsumer : IConsumer<AssignRideToDriverCommand>
     {
-        private readonly ILogger<AssignDriverConsumer> _logger;
+        private readonly ILogger<AssignRideToDriverConsumer> _logger;
         private readonly ISender _sender;
-        private readonly RideDbContext _dbContext;
+        private readonly DriverDbContext _dbContext;
 
-        public AssignDriverConsumer(ILogger<AssignDriverConsumer> logger, ISender sender, RideDbContext dbContext)
+        public AssignRideToDriverConsumer(ILogger<AssignRideToDriverConsumer> logger, ISender sender, DriverDbContext dbContext)
         {
             _logger = logger;
             _sender = sender;
             _dbContext = dbContext;
         }
 
-        public async Task Consume(ConsumeContext<AssignDriverToRideCommand> context)
+        public async Task Consume(ConsumeContext<AssignRideToDriverCommand> context)
         {
             if (await _dbContext.ProcessedMessages.AnyAsync(p =>
                     p.MessageId == context.MessageId &&
-                    p.ConsumerName == nameof(AssignDriverConsumer),
+                    p.ConsumerName == nameof(AssignRideToDriverConsumer),
                     context.CancellationToken))
             {
                 return;
@@ -40,11 +39,11 @@ namespace ZM.RideService.Api.Infrastructure.Consumers
                 await _dbContext.ProcessedMessages.AddAsync(new ProcessedMessage
                 {
                     MessageId = context.MessageId,
-                    ConsumerName = nameof(AssignDriverConsumer),
+                    ConsumerName = nameof(AssignRideToDriverConsumer),
                     CreatedAtUtc = DateTime.UtcNow
                 }, context.CancellationToken);
 
-                await _sender.Send(new AssignDriverCommand(
+                await _sender.Send(new AssignRideCommand(
                     context.Message.RideId,
                     context.Message.DriverId),
                     context.CancellationToken);
@@ -54,7 +53,7 @@ namespace ZM.RideService.Api.Infrastructure.Consumers
             catch (Exception ex)
             {
                 //await _unitOfWork.RollbackAsync(context.CancellationToken);
-                _logger.LogError(ex, $"Error processing {nameof(AssignDriverConsumer)} with MessageId: {context.MessageId}");
+                _logger.LogError(ex, $"Error processing {nameof(AssignRideToDriverConsumer)} with MessageId: {context.MessageId}");
             }
         }
     }

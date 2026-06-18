@@ -72,9 +72,10 @@ namespace ZM.DriverService.Api.Persistence.Repositories
             dbDriver.LastName = driver.LastName;
             dbDriver.Email = driver.Email;
             dbDriver.PhoneNumber = driver.PhoneNumber;
+            dbDriver.Status = driver.Status;
+            dbDriver.CurrentRideId = driver.CurrentRideId;
             dbDriver.CurrentLatitude = driver.CurrentLocation?.Latitude;
             dbDriver.CurrentLongitude = driver.CurrentLocation?.Longitude;
-            dbDriver.Status = driver.Status;
             dbDriver.LastLocationUpdateAtUtc = driver.LastLocationUpdateAtUtc;
             dbDriver.LastStatusChangeAtUtc = driver.LastStatusChangeAtUtc;
 
