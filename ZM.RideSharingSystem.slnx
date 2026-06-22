@@ -4,5 +4,6 @@
     <Build />
   </Project>
   <Project Path="ZM.DriverService.Api/ZM.DriverService.Api.csproj" Id="7fbc3ec9-9598-49e3-9c4a-ca307bd18a6d" />
+  <Project Path="ZM.MatchingService.Api/ZM.MatchingService.Api.csproj" Id="cae4c782-6b1b-4ae6-aaa9-7fad0c321236" />
   <Project Path="ZM.RideService.Api/ZM.RideService.Api.csproj" />
 </Solution>

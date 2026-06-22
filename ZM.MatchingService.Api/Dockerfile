@@ -4,27 +4,27 @@
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
-EXPOSE 5100
-EXPOSE 5101
+EXPOSE 5200
+EXPOSE 5201
 
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["ZM.DriverService.Api/ZM.DriverService.Api.csproj", "ZM.DriverService.Api/"]
-RUN dotnet restore "./ZM.DriverService.Api/ZM.DriverService.Api.csproj"
+COPY ["ZM.MatchingService.Api/ZM.MatchingService.Api.csproj", "ZM.MatchingService.Api/"]
+RUN dotnet restore "./ZM.MatchingService.Api/ZM.MatchingService.Api.csproj"
 COPY . .
-WORKDIR "/src/ZM.DriverService.Api"
-RUN dotnet build "./ZM.DriverService.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/ZM.MatchingService.Api"
+RUN dotnet build "./ZM.MatchingService.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./ZM.DriverService.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./ZM.MatchingService.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ZM.DriverService.Api.dll"]
+ENTRYPOINT ["dotnet", "ZM.MatchingService.Api.dll"]

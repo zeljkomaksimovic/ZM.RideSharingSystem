@@ -13,6 +13,34 @@ services:
     networks:
       - proxybackend
 
+  zm.driverservice.api:
+    image: ${DOCKER_REGISTRY-}zmdriverserviceapi
+    build:
+      context: .
+      dockerfile: ZM.DriverService.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:5100
+    ports:
+      - "5100:5100"
+      - "5101:5101"
+    networks:
+      - proxybackend
+
+  zm.matchingservice.api:
+    image: ${DOCKER_REGISTRY-}zmmatchingserviceapi
+    build:
+      context: .
+      dockerfile: ZM.MatchingService.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:5200
+    ports:
+      - "5200:5200"
+      - "5201:5201"
+    networks:
+      - proxybackend
+
   mqbroker:
     image: rabbitmq:3-management
     container_name: MQueue
