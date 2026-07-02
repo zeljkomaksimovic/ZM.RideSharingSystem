@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ZM.MatchingService.Api.Domain.Models;
 using ZM.MatchingService.Api.Persistence.Idempotence;
-using ZM.MatchingService.Api.Persistence.Models;
 
 namespace ZM.MatchingService.Api.Persistence
 {

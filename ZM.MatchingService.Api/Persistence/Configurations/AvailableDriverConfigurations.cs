@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ZM.MatchingService.Api.Persistence.Models;
+using ZM.MatchingService.Api.Domain.Models;
 
 namespace ZM.MatchingService.Api.Persistence.Configurations
 {

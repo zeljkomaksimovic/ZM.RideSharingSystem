@@ -10,7 +10,7 @@ namespace ZM.MatchingService.Api.Presentation
         {
             app.MapGet("api/GetAvailableDrivers", async (ISender sender) =>
             {
-                var drivers = await sender.Send(new GetAvailableDriversRequest());
+                var drivers = await sender.Send(new FindDriverCommand());
                 return Results.Ok(drivers);
             });
         }
