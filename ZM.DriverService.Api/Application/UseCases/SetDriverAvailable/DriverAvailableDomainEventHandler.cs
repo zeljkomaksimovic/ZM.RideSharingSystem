@@ -5,11 +5,11 @@ using ZM.RideSharingSystem.Contracts.Events;
 
 namespace ZM.DriverService.Api.Application.UseCases.SetDriverAvailable
 {
-    public class DriverUnavailableDomainEventHandler : INotificationHandler<DriverAvailableDomainEvent>
+    public class DriverAvailableDomainEventHandler : INotificationHandler<DriverAvailableDomainEvent>
     {
         private readonly IBus _bus;
 
-        public DriverUnavailableDomainEventHandler(IBus bus)
+        public DriverAvailableDomainEventHandler(IBus bus)
         {
             _bus = bus;
         }
@@ -17,7 +17,9 @@ namespace ZM.DriverService.Api.Application.UseCases.SetDriverAvailable
         public async Task Handle(DriverAvailableDomainEvent notification, CancellationToken cancellationToken)
         {
             await _bus.Publish(new DriverAvailableEvent(
-                notification.DriverId),
+                notification.DriverId,
+                notification.Latitude,
+                notification.Longitude),
                 cancellationToken);
         }
     }

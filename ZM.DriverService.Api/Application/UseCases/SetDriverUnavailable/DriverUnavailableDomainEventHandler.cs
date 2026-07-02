@@ -5,11 +5,11 @@ using ZM.RideSharingSystem.Contracts.Events;
 
 namespace ZM.DriverService.Api.Application.UseCases.SetDriverUnavailable
 {
-    public class DriverLocationUpdatedDomainEventHandler : INotificationHandler<DriverUnavailableDomainEvent>
+    public class DriverUnavailableDomainEventHandler : INotificationHandler<DriverUnavailableDomainEvent>
     {
         private readonly IBus _bus;
 
-        public DriverLocationUpdatedDomainEventHandler(IBus bus)
+        public DriverUnavailableDomainEventHandler(IBus bus)
         {
             _bus = bus;
         }

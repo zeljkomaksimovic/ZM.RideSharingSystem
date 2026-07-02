@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using ZM.MatchingService.Api.Application.Cache;
-using ZM.MatchingService.Api.Application.UseCases.SetDriverUnavailable;
 using ZM.MatchingService.Api.Domain.OperationResult;
 
 namespace ZM.MatchingService.Api.Application.UseCases.RemoveAvailableDriver

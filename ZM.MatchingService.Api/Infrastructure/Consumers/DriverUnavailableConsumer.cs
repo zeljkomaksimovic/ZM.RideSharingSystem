@@ -1,6 +1,6 @@
 ﻿using MassTransit;
 using MediatR;
-using ZM.MatchingService.Api.Application.UseCases.SetDriverUnavailable;
+using ZM.MatchingService.Api.Application.UseCases.RemoveAvailableDriver;
 using ZM.RideSharingSystem.Contracts.Events;
 
 namespace ZM.MatchingService.Api.Presentation.Consumers

@@ -1,11 +1,13 @@
 ﻿using ZM.DriverService.Api.Domain.Enums;
 using ZM.DriverService.Api.Domain.ErrorMessages;
+using ZM.DriverService.Api.Domain.Events;
 using ZM.DriverService.Api.Domain.OperationResult;
+using ZM.DriverService.Api.Domain.Primitives;
 using ZM.DriverService.Api.Domain.ValueObjects;
 
 namespace ZM.DriverService.Api.Domain.Entities
 {
-    public class Driver
+    public class Driver : AggregateRoot
     {
         private Driver()
         {
@@ -73,6 +75,8 @@ namespace ZM.DriverService.Api.Domain.Entities
             Status = DriverStatus.Available;
             LastStatusChangeAtUtc = changedAtUtc;
 
+            Raise(new DriverAvailableDomainEvent(Id, CurrentLocation!.Latitude, CurrentLocation!.Longitude));
+
             return Result.Success();
         }
 
@@ -85,6 +89,8 @@ namespace ZM.DriverService.Api.Domain.Entities
 
             Status = DriverStatus.Offline;
             LastStatusChangeAtUtc = changedAtUtc;
+
+            Raise(new DriverUnavailableDomainEvent(Id));
 
             return Result.Success();
         }
@@ -99,6 +105,8 @@ namespace ZM.DriverService.Api.Domain.Entities
             CurrentRideId = rideId;
             Status = DriverStatus.Assigned;
             LastStatusChangeAtUtc = assignedAtUtc;
+
+            Raise(new RideAssignedDomainEvent(rideId, Id));
 
             return Result.Success();
         }
