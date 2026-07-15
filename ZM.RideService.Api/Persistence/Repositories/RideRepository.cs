@@ -51,15 +51,25 @@ namespace ZM.RideService.Api.Persistence.Repositories
             var dbRide = new Models.Ride
             {
                 Id = ride.Id,
-                RiderId = ride.RiderId,
+                RiderId = ride.Rider.Id,
+                RiderFirstName = ride.Rider.FirstName,
+                RiderLastName = ride.Rider.LastName,
+                RiderEmail = ride.Rider.Email,
+                DriverId = ride.DriverId,
                 PickupLatitude = ride.PickupLocation.Latitude,
                 PickupLongitude = ride.PickupLocation.Longitude,
                 PickupAddress = ride.PickupLocation.Address,
                 DestinationLatitude = ride.DestinationLocation.Latitude,
                 DestinationLongitude = ride.DestinationLocation.Longitude,
                 DestinationAddress = ride.DestinationLocation.Address,
-                CreatedAtUtc = ride.CreatedAtUtc,
                 Status = ride.Status,
+                EstimatedFare = ride.EstimatedFare,
+                ActualFare = ride.ActualFare,
+                CreatedAtUtc = ride.CreatedAtUtc,
+                AssignedAtUtc = ride.AssignedAtUtc,
+                StartedAtUtc = ride.StartedAtUtc,
+                CompletedAtUtc = ride.CompletedAtUtc,
+                CancelledAtUtc = ride.CancelledAtUtc
             };
 
             await _dbContext.Rides.AddAsync(dbRide, cancellationToken);
@@ -67,14 +77,24 @@ namespace ZM.RideService.Api.Persistence.Repositories
 
         public async Task<Ride?> GetRideByIdAsync(Guid rideId, CancellationToken cancellationToken = default)
         {
-            var ride = await _dbContext.Rides
+            var ride =  await _dbContext.Rides
                 .Where(r => r.Id == rideId)
                 .Select(r => Ride.Rehydrate(
                     r.Id,
-                    r.RiderId,
+                    new RiderInfo(
+                        r.RiderId,
+                        r.RiderFirstName,
+                        r.RiderLastName,
+                        r.RiderEmail),
                     r.DriverId,
-                    new RideLocation(r.PickupLatitude, r.PickupLongitude, r.PickupAddress),
-                    new RideLocation(r.DestinationLatitude, r.DestinationLongitude, r.DestinationAddress),
+                    new RideLocation(
+                        r.PickupLatitude,
+                        r.PickupLongitude,
+                        r.PickupAddress),
+                    new RideLocation(
+                        r.DestinationLatitude,
+                        r.DestinationLongitude,
+                        r.DestinationAddress),
                     r.Status,
                     r.EstimatedFare,
                     r.ActualFare,

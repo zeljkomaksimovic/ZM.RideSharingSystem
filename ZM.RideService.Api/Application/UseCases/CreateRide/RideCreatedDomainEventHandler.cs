@@ -17,8 +17,8 @@ namespace ZM.RideService.Api.Application.UseCases.CreateRide
         public async Task Handle(RideCreatedDomainEvent notification, CancellationToken cancellationToken)
         {
             await _bus.Publish(new RideCreatedEvent(
-                notification.RideId, 
-                notification.RiderId), 
+                notification.Ride.Id, 
+                notification.Ride.Rider.Email), 
                 cancellationToken);
         }
     }

@@ -14,10 +14,10 @@ namespace ZM.RideService.Api.Domain.Entities
         {
         }
 
-        private Ride(Guid rideId, Guid riderId, RideLocation pickupLocation, RideLocation destinationLocation, RideStatus status, DateTime createdAtUtc)
+        private Ride(Guid rideId, RiderInfo rider, RideLocation pickupLocation, RideLocation destinationLocation, RideStatus status, DateTime createdAtUtc)
         {
             Id = rideId;
-            RiderId = riderId;
+            Rider = rider;
             PickupLocation = pickupLocation;
             DestinationLocation = destinationLocation;
             Status = status;
@@ -26,7 +26,7 @@ namespace ZM.RideService.Api.Domain.Entities
 
         private Ride(
             Guid id,
-            Guid riderId,
+            RiderInfo rider,
             Guid? driverId,
             RideLocation pickupLocation,
             RideLocation destinationLocation,
@@ -40,7 +40,7 @@ namespace ZM.RideService.Api.Domain.Entities
             DateTime? cancelledAtUtc)
         {
             Id = id;
-            RiderId = riderId;
+            Rider = rider;
             DriverId = driverId;
             PickupLocation = pickupLocation;
             DestinationLocation = destinationLocation;
@@ -55,7 +55,7 @@ namespace ZM.RideService.Api.Domain.Entities
         }
 
         public Guid Id { get; private set; }
-        public Guid RiderId { get; private set; }
+        public RiderInfo Rider { get; private set; }
         public Guid? DriverId { get; private set; }
         public RideLocation PickupLocation { get; private set; }
         public RideLocation DestinationLocation { get; private set; }
@@ -68,17 +68,17 @@ namespace ZM.RideService.Api.Domain.Entities
         public DateTime? CompletedAtUtc { get; private set; }
         public DateTime? CancelledAtUtc { get; private set; }
 
-        public static Ride Create(Guid rideId, Guid riderId, RideLocation pickupLocation, RideLocation destinationLocation, DateTime createdAtUtc)
+        public static Ride Create(Guid rideId, RiderInfo rider, RideLocation pickupLocation, RideLocation destinationLocation, DateTime createdAtUtc)
         {
             var ride = new Ride(
                 rideId,
-                riderId,
+                rider,
                 pickupLocation,
                 destinationLocation,
                 RideStatus.Requested,
                 createdAtUtc);
 
-            ride.Raise(new RideCreatedDomainEvent(rideId, riderId));
+            ride.Raise(new RideCreatedDomainEvent(ride));
 
             return ride;
         }
@@ -94,7 +94,7 @@ namespace ZM.RideService.Api.Domain.Entities
             Status = RideStatus.DriverAssigned;
             AssignedAtUtc = assignedAtUtc;
 
-            Raise(new DriverAssignedDomainEvent(Id, driverId));
+            Raise(new DriverAssignedDomainEvent(this));
 
             return Result.Success();
         }
@@ -123,7 +123,7 @@ namespace ZM.RideService.Api.Domain.Entities
             ActualFare = actualFare;
             CompletedAtUtc = completedAtUtc;
 
-            Raise(new RideCompletedDomainEvent(Id));
+            Raise(new RideCompletedDomainEvent(this));
 
             return Result.Success();
         }
@@ -143,7 +143,7 @@ namespace ZM.RideService.Api.Domain.Entities
 
         public static Ride Rehydrate(
             Guid id,
-            Guid riderId,
+            RiderInfo rider,
             Guid? driverId,
             RideLocation pickupLocation,
             RideLocation destinationLocation,
@@ -158,7 +158,7 @@ namespace ZM.RideService.Api.Domain.Entities
         {
             return new Ride(
                 id,
-                riderId,
+                rider,
                 driverId,
                 pickupLocation,
                 destinationLocation,

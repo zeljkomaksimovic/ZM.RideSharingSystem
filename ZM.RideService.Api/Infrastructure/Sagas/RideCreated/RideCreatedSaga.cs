@@ -1,6 +1,5 @@
 ﻿#nullable disable
 using MassTransit;
-using ZM.RideSharingSystem.Contracts.Commands.Driver;
 using ZM.RideSharingSystem.Contracts.Commands.Matching;
 using ZM.RideSharingSystem.Contracts.Commands.Notification;
 using ZM.RideSharingSystem.Contracts.Commands.Payment;
@@ -12,81 +11,91 @@ namespace ZM.RideService.Api.Infrastructure.Sagas.RideCreated
     public class RideCreatedSaga : MassTransitStateMachine<RideCreatedSagaData>
     {
         public State AwaitingDriverMatch { get; private set; }
+
         public State AwaitingDriverAssignment { get; private set; }
+
         public State AwaitingRideCompletion { get; private set; }
+
         public State AwaitingPayment { get; private set; }
-        public State AwaitingNotification { get; private set; }
 
         public Event<RideCreatedEvent> RideCreated { get; private set; }
+
         public Event<DriverMatchedEvent> DriverMatched { get; private set; }
+
         public Event<DriverAssignedEvent> DriverAssigned { get; private set; }
+
         public Event<RideCompletedEvent> RideCompleted { get; private set; }
+
         public Event<PaymentCompletedEvent> PaymentCompleted { get; private set; }
-        public Event<PaymentProcessedNotificationSentEvent> PaymentProcessedNotificationSent { get; private set; }
 
         public RideCreatedSaga()
         {
             InstanceState(x => x.CurrentState);
 
-            Event(() => RideCreated, e => e.CorrelateById(m => m.Message.RideId));
-            Event(() => DriverMatched, e => e.CorrelateById(m => m.Message.RideId));
-            Event(() => DriverAssigned, e => e.CorrelateById(m => m.Message.RideId));
-            Event(() => RideCompleted, e => e.CorrelateById(m => m.Message.RideId));
-            Event(() => PaymentCompleted, e => e.CorrelateById(m => m.Message.RideId));
+            Event(() => RideCreated,
+                x => x.CorrelateById(m => m.Message.RideId));
+
+            Event(() => DriverMatched,
+                x => x.CorrelateById(m => m.Message.RideId));
+
+            Event(() => DriverAssigned,
+                x => x.CorrelateById(m => m.Message.RideId));
+
+            Event(() => RideCompleted,
+                x => x.CorrelateById(m => m.Message.RideId));
+
+            Event(() => PaymentCompleted,
+                x => x.CorrelateById(m => m.Message.RideId));
 
             Initially(
                 When(RideCreated)
-                .Then(context =>
-                {
-                    context.Saga.RideId = context.Message.RideId;
-                })
-                .TransitionTo(AwaitingDriverMatch)
-               .Publish(context => new FindDriverCommand(context.Message.RideId)));
+                    .Then(context =>
+                    {
+                        context.Saga.RideId = context.Message.RideId;
+                        context.Saga.RecipientEmail = context.Message.RecipientEmail;
+                    })
+                    .TransitionTo(AwaitingDriverMatch)
+                    .Publish(context =>
+                        new FindDriverCommand(context.Message.RideId)));
 
             During(AwaitingDriverMatch,
                 When(DriverMatched)
-                .Then(context =>
-                {
-                    context.Saga.DriverMatched = true;
-                })
-                .TransitionTo(AwaitingDriverAssignment)
-                .Publish(context => new AssignDriverToRideCommand(context.Message.RideId, context.Message.DriverId)));
+                    .TransitionTo(AwaitingDriverAssignment)
+                    .Publish(context =>
+                        new AssignDriverToRideCommand(
+                            context.Message.RideId,
+                            context.Message.DriverId)));
 
             During(AwaitingDriverAssignment,
                 When(DriverAssigned)
-                .Then(context =>
-                {
-                    context.Saga.DriverAssigned = true;
-                })
-                .TransitionTo(AwaitingRideCompletion)
-                .Publish(context => new CompleteRideCommand(context.Message.RideId)));
+                    .TransitionTo(AwaitingRideCompletion)
+                    .Publish(context =>
+                        new DriverAssignedNotificationCommand(
+                            context.Message.RideId,
+                            context.Message.DriverId,
+                            context.Saga.RecipientEmail)));
 
             During(AwaitingRideCompletion,
                 When(RideCompleted)
-                .Then(context =>
-                {
-                    context.Saga.RideCompleted = true;
-                })
-                .TransitionTo(AwaitingPayment)
-                .Publish(context => new ProcessPaymentCommand(context.Message.RideId)));
+                    .TransitionTo(AwaitingPayment)
+                    .Publish(context =>
+                        new RideCompletedNotificationCommand(
+                            context.Message.RideId,
+                            context.Saga.RecipientEmail))
+                    .Publish(context =>
+                        new ProcessPaymentCommand(context.Message.RideId)));
 
             During(AwaitingPayment,
-               When(PaymentCompleted)
-               .Then(context =>
-               {
-                   context.Saga.PaymentCompleted = true;
-               })
-               .TransitionTo(AwaitingNotification)
-               .Publish(context => new PaymentReceiptNotificationCommand(context.Message.RideId)));
+                When(PaymentCompleted)
+                    .Publish(context =>
+                        new PaymentReceiptNotificationCommand(
+                            context.Message.PaymentId,
+                            context.Message.RideId,
+                            context.Message.Amount,
+                            context.Saga.RecipientEmail))
+                    .Finalize());
 
-            During(AwaitingNotification,
-               When(PaymentProcessedNotificationSent)
-               .Then(context =>
-               {
-                   context.Saga.NotificationSent = true;
-               })
-               .Finalize());
-
+            SetCompletedWhenFinalized();
         }
     }
 }

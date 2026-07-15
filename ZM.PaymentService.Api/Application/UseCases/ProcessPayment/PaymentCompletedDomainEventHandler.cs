@@ -17,7 +17,10 @@ namespace ZM.PaymentService.Api.Application.UseCases.ProcessPayment
         public async Task Handle(PaymentCompletedDomainEvent notification, CancellationToken cancellationToken)
         {
             await _bus.Publish(new PaymentCompletedEvent(
-                notification.RideId), 
+                notification.PaymentId,
+                notification.RideId,
+                notification.Amount,
+                notification.RecipientEmail),
                 cancellationToken);
         }
     }

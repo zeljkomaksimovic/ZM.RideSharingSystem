@@ -1,4 +1,3 @@
-using Carter;
 using ZM.MatchingService.Api.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,5 +13,4 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-app.MapCarter();
 app.Run();

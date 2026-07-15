@@ -7,6 +7,9 @@ namespace ZM.RideService.Api.Persistence.Models
     {
         public Guid Id { get; set; }
         public Guid RiderId { get; set; }
+        public string RiderFirstName { get; set; }
+        public string RiderLastName { get; set; }
+        public string RiderEmail { get; set; }
         public Guid? DriverId { get; set; }
         public double PickupLatitude { get; set; }
         public double PickupLongitude { get; set; }

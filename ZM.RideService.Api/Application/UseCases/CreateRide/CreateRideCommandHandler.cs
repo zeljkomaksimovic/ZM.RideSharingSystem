@@ -24,7 +24,7 @@ namespace ZM.RideService.Api.Application.UseCases.CreateRide
         {
             var ride = Ride.Create(
                 Guid.NewGuid(),
-                request.RiderId, 
+                request.Rider, 
                 request.PickupLocation,
                 request.DestinationLocation, 
                 _dateTimeProvider.UtcNow);

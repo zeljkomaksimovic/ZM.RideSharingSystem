@@ -4,9 +4,7 @@ using ZM.PaymentService.Api.Application.DateTimeProvider;
 using ZM.PaymentService.Api.Application.Repository;
 using ZM.PaymentService.Api.Application.UnitOfWork;
 using ZM.PaymentService.Api.Domain.Entities;
-using ZM.PaymentService.Api.Domain.Events;
 using ZM.PaymentService.Api.Domain.OperationResult;
-using ZM.RideSharingSystem.Contracts.Events;
 
 namespace ZM.PaymentService.Api.Application.UseCases.ProcessPayment
 {
@@ -40,7 +38,7 @@ namespace ZM.PaymentService.Api.Application.UseCases.ProcessPayment
                 request.Amount,
                 _dateTimeProvider.UtcNow);
 
-            var completeResult = payment.Complete(_dateTimeProvider.UtcNow);
+            var completeResult = payment.Complete(request.RecipientEmail, _dateTimeProvider.UtcNow);
             if (completeResult.IsSuccessful is false)
             {
                 return completeResult;

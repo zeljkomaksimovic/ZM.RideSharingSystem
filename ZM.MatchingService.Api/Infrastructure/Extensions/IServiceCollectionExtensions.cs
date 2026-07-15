@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Carter;
-using MassTransit;
+﻿using MassTransit;
+using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
+using ZM.MatchingService.Api.Application.Cache;
+using ZM.MatchingService.Api.Infrastructure.Caches;
 using ZM.MatchingService.Api.Persistence;
 
 namespace ZM.MatchingService.Api.Infrastructure.Extensions
@@ -12,8 +14,9 @@ namespace ZM.MatchingService.Api.Infrastructure.Extensions
             RegisterEntityFramework(services);
             RegisterMediatR(services);
             RegisterMassTransit(services, configuration);
-            RegisterCarter(services);
-            RegisterUnitOfWorks(services);
+            RegisterRedis(services, configuration);
+            RegisterCaches(services);
+            RegisterDateTimeProviders(services);
             RegisterQueries(services);
         }
 
@@ -48,16 +51,23 @@ namespace ZM.MatchingService.Api.Infrastructure.Extensions
             });
         }
 
-        private static void RegisterCarter(IServiceCollection services)
+        private static void RegisterRedis(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddCarter();
+            services.AddSingleton<IConnectionMultiplexer>(_ => 
+                ConnectionMultiplexer.Connect(
+                    configuration.GetConnectionString("Redis")!));
         }
 
-        private static void RegisterUnitOfWorks(IServiceCollection services)
+        private static void RegisterCaches(IServiceCollection services)
+        {
+            services.AddScoped<IAvailableDriverCache, RedisDriverMatchingCache>();
+        }
+
+        private static void RegisterDateTimeProviders(IServiceCollection services)
         {
             services.Scan(scan => scan
                 .FromAssemblyOf<MatchingDbContext>()
-                .AddClasses(classes => classes.Where(c => c.Name.EndsWith("UnitOfWork")))
+                .AddClasses(classes => classes.Where(c => c.Name.EndsWith("DateTimeProvider")))
                 .AsMatchingInterface()
                 .WithScopedLifetime());
         }

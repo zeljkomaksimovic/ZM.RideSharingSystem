@@ -55,6 +55,20 @@ services:
     networks:
       - proxybackend
 
+  zm.notificationservice.api:
+    image: ${DOCKER_REGISTRY-}zmnotificationserviceapi
+    build:
+      context: .
+      dockerfile: ZM.NotificationService.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:5400
+    ports:
+      - "5400:5400"
+      - "5401:5401"
+    networks:
+      - proxybackend
+
   mqbroker:
     image: rabbitmq:3-management
     container_name: MQueue
@@ -70,6 +84,28 @@ services:
     networks: 
       - proxybackend
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisvolume:/data
+    networks: 
+      - proxybackend
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "5540:5540"
+    networks:
+      - proxybackend
+    depends_on:
+      - redis
+    volumes:
+      - redisinsightvolume:/data
+
 networks:
   proxybackend:
     name: proxybackend
@@ -77,3 +113,5 @@ networks:
 
 volumes:
   mqvolume:
+  redisvolume:
+  redisinsightvolume:

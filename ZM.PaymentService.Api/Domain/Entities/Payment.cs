@@ -63,7 +63,7 @@ namespace ZM.PaymentService.Api.Domain.Entities
                 processedAtUtc);
         }
 
-        public Result Complete(DateTime processedAtUtc)
+        public Result Complete(string recipientEmail, DateTime processedAtUtc)
         {
             if (Status == PaymentStatus.Completed)
             {
@@ -73,7 +73,7 @@ namespace ZM.PaymentService.Api.Domain.Entities
             Status = PaymentStatus.Completed;
             ProcessedAtUtc = processedAtUtc;
 
-            Raise(new PaymentCompletedDomainEvent(RideId));
+            Raise(new PaymentCompletedDomainEvent(Id, RideId, Amount, recipientEmail));
 
             return Result.Success();
         }
