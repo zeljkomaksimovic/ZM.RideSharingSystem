@@ -1,25 +1,27 @@
 ﻿using MassTransit;
 using MediatR;
 using ZM.MatchingService.Api.Application.UseCases.UpdateDriverLocation;
+using ZM.MatchingService.Api.Domain.ValueObjects;
 using ZM.RideSharingSystem.Contracts.Events;
 
 namespace ZM.MatchingService.Api.Presentation.Consumers
 {
     public class DriverLocationUpdatedConsumer : IConsumer<DriverLocationUpdatedEvent>
     {
-        private readonly IMediator _mediator;
+        private readonly ISender _sender;
 
-        public DriverLocationUpdatedConsumer(IMediator mediator)
+        public DriverLocationUpdatedConsumer(ISender sender)
         {
-            _mediator = mediator;
+            _sender = sender;
         }
 
         public async Task Consume(ConsumeContext<DriverLocationUpdatedEvent> context)
         {
-            await _mediator.Send(new UpdateDriverLocationCommand(
+            await _sender.Send(new UpdateDriverLocationCommand(
                 context.Message.DriverId,
-                context.Message.Latitude,
-                context.Message.Longitude),
+                new GeoLocation(
+                    context.Message.Latitude, 
+                    context.Message.Longitude)),
                 context.CancellationToken);
         }
     }

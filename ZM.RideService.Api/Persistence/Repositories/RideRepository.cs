@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ZM.RideService.Api.Application.Outbox;
 using ZM.RideService.Api.Application.Repository;
 using ZM.RideService.Api.Domain.Entities;
 using ZM.RideService.Api.Domain.ValueObjects;
@@ -8,10 +9,12 @@ namespace ZM.RideService.Api.Persistence.Repositories
     public class RideRepository : IRideRepository
     {
         private readonly RideDbContext _dbContext;
+        private readonly IDomainEventCollector _domainEventCollector;
 
-        public RideRepository(RideDbContext dbContext)
+        public RideRepository(RideDbContext dbContext, IDomainEventCollector domainEventCollector)
         {
             _dbContext = dbContext;
+            _domainEventCollector = domainEventCollector;
         }
 
         public async Task AssignDriverAsync(Ride ride, CancellationToken cancellationToken = default)
@@ -73,6 +76,10 @@ namespace ZM.RideService.Api.Persistence.Repositories
             };
 
             await _dbContext.Rides.AddAsync(dbRide, cancellationToken);
+
+            _domainEventCollector.AddEvents(ride.DomainEvents);
+
+            ride.ClearDomainEvents();
         }
 
         public async Task<Ride?> GetRideByIdAsync(Guid rideId, CancellationToken cancellationToken = default)

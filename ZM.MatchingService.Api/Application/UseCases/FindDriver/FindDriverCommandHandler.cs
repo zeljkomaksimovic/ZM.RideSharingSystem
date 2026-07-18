@@ -2,7 +2,6 @@
 using MediatR;
 using ZM.MatchingService.Api.Application.Cache;
 using ZM.MatchingService.Api.Domain.OperationResult;
-using ZM.MatchingService.Api.Domain.ValueObjects;
 using ZM.RideSharingSystem.Contracts.Events;
 
 namespace ZM.MatchingService.Api.Application.UseCases.FindDriver

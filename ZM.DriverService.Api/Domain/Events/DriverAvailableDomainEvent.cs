@@ -2,5 +2,5 @@
 
 namespace ZM.DriverService.Api.Domain.Events
 {
-    public record DriverAvailableDomainEvent(Guid DriverId, double Latitude, double Longitude) : IDomainEvent;
+    public record DriverAvailableDomainEvent(Guid DriverId) : IDomainEvent;
 }

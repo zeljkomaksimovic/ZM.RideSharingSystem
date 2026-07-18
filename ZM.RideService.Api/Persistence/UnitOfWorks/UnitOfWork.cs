@@ -1,16 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
+using Newtonsoft.Json;
 using System.Data;
+using ZM.RideService.Api.Application.Outbox;
 using ZM.RideService.Api.Application.UnitOfWork;
+using ZM.RideService.Api.Persistence.Outbox;
 
 namespace ZM.RideService.Api.Persistence.UnitOfWorks
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly RideDbContext _dbContext;
+        private readonly IDomainEventCollector _domainEventCollector;
 
-        public UnitOfWork(RideDbContext dbContext)
+        public UnitOfWork(RideDbContext dbContext, IDomainEventCollector domainEventCollector)
         {
             _dbContext = dbContext;
+            _domainEventCollector = domainEventCollector;
         }
 
         public IDbTransaction BeginTransaction()
@@ -21,7 +26,31 @@ namespace ZM.RideService.Api.Persistence.UnitOfWorks
 
         public Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            ConvertDomainEventsToOutboxMessages();
             return _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        private void ConvertDomainEventsToOutboxMessages()
+        {
+            var outboxMessages = _domainEventCollector
+                .GetDomainEvents()
+                .Select(domainEvent => new OutboxMessage
+                {
+                    Id = Guid.NewGuid(),
+                    OccurredOnUtc = DateTime.UtcNow,
+                    Type = domainEvent.GetType().AssemblyQualifiedName!,
+                    Content = JsonConvert.SerializeObject(
+                        domainEvent,
+                        new JsonSerializerSettings
+                        {
+                            TypeNameHandling = TypeNameHandling.All
+                        })
+                })
+                .ToList();
+            
+            _dbContext.OutboxMessages.AddRange(outboxMessages);
+
+            _domainEventCollector.ClearEvents();
         }
     }
 }

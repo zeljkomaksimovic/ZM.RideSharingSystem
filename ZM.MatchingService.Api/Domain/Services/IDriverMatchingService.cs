@@ -5,6 +5,6 @@ namespace ZM.MatchingService.Api.Domain.Services
 {
     public interface IDriverMatchingService
     {
-        AvailableDriver? FindBestDriver(RideLocation pickupLocation, IReadOnlyCollection<AvailableDriver> availableDrivers);
+        AvailableDriver? FindBestDriver(GeoLocation pickupLocation, IReadOnlyCollection<AvailableDriver> availableDrivers);
     }
 }

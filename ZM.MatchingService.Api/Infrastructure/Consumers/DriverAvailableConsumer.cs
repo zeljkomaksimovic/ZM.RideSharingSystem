@@ -7,19 +7,17 @@ namespace ZM.MatchingService.Api.Presentation.Consumers
 {
     public class DriverAvailableConsumer : IConsumer<DriverAvailableEvent>
     {
-        private readonly IMediator _mediator;
+        private readonly ISender _sender;
 
-        public DriverAvailableConsumer(IMediator mediator)
+        public DriverAvailableConsumer(ISender sender)
         {
-            _mediator = mediator;
+            _sender = sender;
         }
 
         public async Task Consume(ConsumeContext<DriverAvailableEvent> context)
         {
-            await _mediator.Send(new AddAvailableDriverCommand(
-                context.Message.DriverId,
-                context.Message.Latitude,
-                context.Message.Longitude),
+            await _sender.Send(new AddAvailableDriverCommand(
+                context.Message.DriverId),
                 context.CancellationToken);
         }
     }

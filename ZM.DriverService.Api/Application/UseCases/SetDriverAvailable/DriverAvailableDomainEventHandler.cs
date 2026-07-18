@@ -17,9 +17,7 @@ namespace ZM.DriverService.Api.Application.UseCases.SetDriverAvailable
         public async Task Handle(DriverAvailableDomainEvent notification, CancellationToken cancellationToken)
         {
             await _bus.Publish(new DriverAvailableEvent(
-                notification.DriverId,
-                notification.Latitude,
-                notification.Longitude),
+                notification.DriverId),
                 cancellationToken);
         }
     }

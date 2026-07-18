@@ -8,20 +8,20 @@ using ZM.RideService.Api.Domain.OperationResult;
 
 namespace ZM.RideService.Api.Application.UseCases.StartRide
 {
-    public class CancelRideCommandHandler : IRequestHandler<CancelRideCommand, Result>
+    public class StartRideCommandHandler : IRequestHandler<StartRideCommand, Result>
     {
         private readonly IRideRepository _rideRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IDateTimeProvider _dateTimeProvider;
 
-        public CancelRideCommandHandler(IRideRepository rideRepository, IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider)
+        public StartRideCommandHandler(IRideRepository rideRepository, IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider)
         {
             _rideRepository = rideRepository;
             _unitOfWork = unitOfWork;
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task<Result> Handle(CancelRideCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(StartRideCommand request, CancellationToken cancellationToken)
         {
             var ride = await _rideRepository.GetRideByIdAsync(request.RideId, cancellationToken);
             if (ride is null)

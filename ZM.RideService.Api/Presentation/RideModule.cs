@@ -21,26 +21,26 @@ namespace ZM.RideService.Api.Presentation
 
             app.MapPost("api/CreateRide", async([FromBody] CreateRideCommand request, ISender sender) => 
             {
-                await sender.Send(request);
-                return Results.Ok();
+                var ride = await sender.Send(request);
+                return Results.Ok(ride);
             });
 
             app.MapPut("api/AssignDriver", async ([FromBody] AssignDriverCommand request, ISender sender) =>
             {
-                await sender.Send(request);
-                return Results.Ok();
+                var ride = await sender.Send(request);
+                return Results.Ok(ride);
             });
 
-            app.MapPut("api/StartRide", async ([FromBody] CancelRideCommand request, ISender sender) =>
+            app.MapPut("api/StartRide", async ([FromBody] StartRideCommand request, ISender sender) =>
             {
-                await sender.Send(request);
-                return Results.Ok();
+                var ride = await sender.Send(request);
+                return Results.Ok(ride);
             });
 
             app.MapPut("api/CompleteRide", async ([FromBody] CompleteRideCommand request, ISender sender) =>
             {
-                await sender.Send(request);
-                return Results.Ok();
+                var ride = await sender.Send(request);
+                return Results.Ok(ride);
             });
         }
     }

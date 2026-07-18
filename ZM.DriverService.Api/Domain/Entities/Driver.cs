@@ -75,7 +75,7 @@ namespace ZM.DriverService.Api.Domain.Entities
             Status = DriverStatus.Available;
             LastStatusChangeAtUtc = changedAtUtc;
 
-            Raise(new DriverAvailableDomainEvent(Id, CurrentLocation!.Latitude, CurrentLocation!.Longitude));
+            Raise(new DriverAvailableDomainEvent(Id));
 
             return Result.Success();
         }

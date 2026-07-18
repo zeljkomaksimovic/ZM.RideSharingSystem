@@ -1,7 +1,11 @@
 ﻿using Carter;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Quartz;
+using ZM.RideService.Api.Application.Outbox;
+using ZM.RideService.Api.Infrastructure.BackgroundJobs;
 using ZM.RideService.Api.Persistence;
+using ZM.RideService.Api.Persistence.Outbox;
 using ZM.RideService.Api.Persistence.Repositories;
 
 namespace ZM.RideService.Api.Infrastructure.Extensions
@@ -13,7 +17,9 @@ namespace ZM.RideService.Api.Infrastructure.Extensions
             RegisterEntityFramework(services);
             RegisterMediatR(services);
             RegisterMassTransit(services, configuration);
+            RegisterQuartz(services);
             RegisterCarter(services);
+            RegisterDomainEventCollector(services);
             RegisterUnitOfWorks(services);
             RegisterDateTimeProviders(services);
             RegisterQueries(services);
@@ -51,9 +57,34 @@ namespace ZM.RideService.Api.Infrastructure.Extensions
             });
         }
 
+        private static void RegisterQuartz(IServiceCollection services)
+        {
+            services.AddQuartz(configure =>
+            {
+                var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+
+                configure
+                .AddJob<ProcessOutboxMessagesJob>(jobKey, job => job.WithIdentity(jobKey))
+                .AddTrigger(
+                    options =>
+                        options.ForJob(jobKey)
+                            .WithSimpleSchedule(
+                            schedule =>
+                                schedule.WithIntervalInSeconds(5)
+                                        .RepeatForever()));
+            });
+
+            services.AddQuartzHostedService();
+        }
+
         private static void RegisterCarter(IServiceCollection services)
         {
             services.AddCarter();
+        }
+
+        private static void RegisterDomainEventCollector(IServiceCollection services)
+        {
+            services.AddScoped<IDomainEventCollector, DomainEventCollector>();
         }
 
         private static void RegisterUnitOfWorks(IServiceCollection services)

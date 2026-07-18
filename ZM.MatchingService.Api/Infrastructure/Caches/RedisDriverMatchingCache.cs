@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 using ZM.MatchingService.Api.Application.Cache;
 using ZM.MatchingService.Api.Domain.Models;
 using ZM.MatchingService.Api.Domain.ValueObjects;
@@ -8,9 +7,9 @@ namespace ZM.MatchingService.Api.Infrastructure.Caches
 {
     public class RedisDriverMatchingCache : IAvailableDriverCache
     {
-        private const string AvailableDriversKey = "available-drivers";
-        private const string DriverKeyPrefix = "driver:";
-        private const double SearchRadiusInKilometers = 10;
+        private const string AvailableDriversSetKey = "drivers:available";
+        private const string DriversGeoKey = "drivers:geo";
+        private const string DriverMetadataPrefix = "driver:";
 
         private readonly IDatabase _database;
 
@@ -19,82 +18,90 @@ namespace ZM.MatchingService.Api.Infrastructure.Caches
             _database = connectionMultiplexer.GetDatabase();
         }
 
-        public async Task AddOrUpdateDriverAsync(AvailableDriver driver, CancellationToken cancellationToken = default)
+        public async Task AddAvailableDriverAsync(Guid driverId, CancellationToken cancellationToken = default)
         {
-            await _database.GeoAddAsync(
-                AvailableDriversKey,
-                driver.Longitude,
-                driver.Latitude,
-                driver.DriverId.ToString());
-
-            var metadataKey = GetMetadataKey(driver.DriverId);
-
-            await _database.HashSetAsync(metadataKey, new[]
-            {
-                new HashEntry(
-                    nameof(AvailableDriver.LastLocationUpdateAtUtc),
-                    driver.LastLocationUpdateAtUtc.ToString("O"))
-            });
+            await _database.SetAddAsync(
+                AvailableDriversSetKey,
+                driverId.ToString());
         }
 
         public async Task RemoveDriverAsync(Guid driverId, CancellationToken cancellationToken = default)
         {
-            await _database.GeoRemoveAsync(AvailableDriversKey, driverId.ToString());
+            var member = driverId.ToString();
+
+            await _database.SetRemoveAsync(AvailableDriversSetKey, member);
+
+            await _database.GeoRemoveAsync(DriversGeoKey, member);
+
             await _database.KeyDeleteAsync(GetMetadataKey(driverId));
         }
 
-        public async Task<AvailableDriver?> GetNearestDriverAsync(RideLocation pickupLocation, CancellationToken cancellationToken = default)
+        public async Task UpdateDriverLocationAsync(Guid driverId, GeoLocation location, DateTime updatedAtUtc, CancellationToken cancellationToken = default)
         {
-            var searchResult = await _database.GeoRadiusAsync(
-                AvailableDriversKey,
+            var member = driverId.ToString();
+
+            if (!await _database.SetContainsAsync(
+                    AvailableDriversSetKey,
+                    member))
+            {
+                return;
+            }
+
+            await _database.GeoAddAsync(
+                DriversGeoKey,
+                location.Longitude,
+                location.Latitude,
+                member);
+
+            await _database.HashSetAsync(
+                GetMetadataKey(driverId),
+                new[]
+                {
+                    new HashEntry(
+                        nameof(AvailableDriver.LastLocationUpdateAtUtc),
+                        updatedAtUtc.ToString("O"))
+                });
+        }
+
+        public async Task<AvailableDriver?> GetNearestDriverAsync(
+            GeoLocation pickupLocation,
+            CancellationToken cancellationToken = default)
+        {
+            var drivers = await _database.GeoRadiusAsync(
+                DriversGeoKey,
                 pickupLocation.Longitude,
                 pickupLocation.Latitude,
-                SearchRadiusInKilometers,
+                10,
                 GeoUnit.Kilometers,
-                count: 1,
                 order: Order.Ascending);
 
-            if (searchResult.Length == 0)
+            foreach (var driver in drivers)
             {
-                return null;
+                var member = driver.Member.ToString();
+
+                if (!await _database.SetContainsAsync(
+                        AvailableDriversSetKey,
+                        member))
+                {
+                    continue;
+                }
+
+                var metadata = await _database.HashGetAllAsync(GetMetadataKey(Guid.Parse(member)));
+
+                var values = metadata.ToDictionary(
+                    x => x.Name.ToString(),
+                    x => x.Value.ToString());
+
+                return new AvailableDriver(
+                    Guid.Parse(member),
+                    driver.Position!.Value.Latitude,
+                    driver.Position!.Value.Longitude,
+                    DateTime.Parse(values[nameof(AvailableDriver.LastLocationUpdateAtUtc)]));
             }
 
-            var nearestDriver = searchResult[0];
-
-            if (!nearestDriver.Position.HasValue)
-            {
-                return null;
-            }
-
-            var driverId = Guid.Parse(nearestDriver.Member.ToString());
-
-            var metadata = await _database.HashGetAllAsync(
-                GetMetadataKey(driverId));
-
-            var values = metadata.ToDictionary(
-                entry => entry.Name.ToString(),
-                entry => entry.Value.ToString());
-
-            if (!values.TryGetValue(
-                nameof(AvailableDriver.LastLocationUpdateAtUtc),
-                out var lastLocationUpdate))
-            {
-                return null;
-            }
-
-            return new AvailableDriver(
-                driverId,
-                nearestDriver.Position.Value.Latitude,
-                nearestDriver.Position.Value.Longitude,
-                DateTime.Parse(
-                    lastLocationUpdate,
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.RoundtripKind));
+            return null;
         }
 
-        private static string GetMetadataKey(Guid driverId)
-        {
-            return $"{DriverKeyPrefix}{driverId}";
-        }
+        private static string GetMetadataKey(Guid driverId) => $"{DriverMetadataPrefix}{driverId}";
     }
 }

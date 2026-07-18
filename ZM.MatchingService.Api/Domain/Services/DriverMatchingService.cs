@@ -5,14 +5,14 @@ namespace ZM.MatchingService.Api.Domain.Services
 {
     public class DriverMatchingService : IDriverMatchingService
     {
-        public AvailableDriver? FindBestDriver( RideLocation pickupLocation, IReadOnlyCollection<AvailableDriver> availableDrivers)
+        public AvailableDriver? FindBestDriver( GeoLocation pickupLocation, IReadOnlyCollection<AvailableDriver> availableDrivers)
         {
             return availableDrivers
                 .OrderBy(driver => CalculateDistance(
                     pickupLocation.Latitude,
                     pickupLocation.Longitude,
-                    driver.Latitude,
-                    driver.Longitude))
+                    driver.Latitude!.Value,
+                    driver.Longitude!.Value))
                 .FirstOrDefault();
         }
 

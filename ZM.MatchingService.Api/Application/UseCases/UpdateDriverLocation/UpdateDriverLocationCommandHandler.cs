@@ -2,7 +2,6 @@
 using ZM.MatchingService.Api.Application.Cache;
 using ZM.MatchingService.Api.Application.DateTimeProvider;
 using ZM.MatchingService.Api.Domain.OperationResult;
-using ZM.MatchingService.Api.Domain.Models;
 
 namespace ZM.MatchingService.Api.Application.UseCases.UpdateDriverLocation
 {
@@ -19,13 +18,11 @@ namespace ZM.MatchingService.Api.Application.UseCases.UpdateDriverLocation
 
         public async Task<Result> Handle(UpdateDriverLocationCommand request, CancellationToken cancellationToken)
         {
-            var driver = new AvailableDriver(
+            await _availableDriverCache.UpdateDriverLocationAsync(
                 request.DriverId,
-                request.Latitude,
-                request.Longitude,
-                _dateTimeProvider.UtcNow);
-
-            await _availableDriverCache.AddOrUpdateDriverAsync(driver, cancellationToken);
+                request.Location,
+                _dateTimeProvider.UtcNow,
+                cancellationToken);
 
             return Result.Success();
         }
