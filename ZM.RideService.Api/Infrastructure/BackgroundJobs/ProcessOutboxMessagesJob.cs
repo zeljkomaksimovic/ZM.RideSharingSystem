@@ -42,6 +42,7 @@ namespace ZM.RideService.Api.Infrastructure.BackgroundJobs
                    new JsonSerializerSettings
                    {
                        TypeNameHandling = TypeNameHandling.All,
+                       ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
                    });
 
                 if (domainEvent is null)

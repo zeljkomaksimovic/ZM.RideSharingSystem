@@ -3,6 +3,7 @@ using ZM.DriverService.Api.Application.DateTimeProvider;
 using ZM.DriverService.Api.Application.Repository;
 using ZM.DriverService.Api.Application.UnitOfWork;
 using ZM.DriverService.Api.Domain.ErrorMessages;
+using ZM.DriverService.Api.Domain.Events;
 using ZM.DriverService.Api.Domain.OperationResult;
 using ZM.DriverService.Api.Domain.ValueObjects;
 
@@ -12,12 +13,18 @@ namespace ZM.DriverService.Api.Application.UseCases.UpdateDriverLocation
     {
         private readonly IDriverRepository _driverRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPublisher _publisher;
         private readonly IDateTimeProvider _dateTimeProvider;
 
-        public UpdateDriverLocationCommandHandler(IDriverRepository driverRepository, IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider)
+        public UpdateDriverLocationCommandHandler(
+            IDriverRepository driverRepository, 
+            IUnitOfWork unitOfWork, 
+            IPublisher publisher,
+            IDateTimeProvider dateTimeProvider)
         {
             _driverRepository = driverRepository;
             _unitOfWork = unitOfWork;
+            _publisher = publisher;
             _dateTimeProvider = dateTimeProvider;
         }
 
@@ -34,6 +41,12 @@ namespace ZM.DriverService.Api.Application.UseCases.UpdateDriverLocation
             await _driverRepository.UpdateDriverAsync(driver, cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await _publisher.Publish(new DriverLocationUpdatedDomainEvent(
+                driver.Id, 
+                request.Latitude,
+                request.Longitude),
+                cancellationToken);
 
             return Result.Success();
         }

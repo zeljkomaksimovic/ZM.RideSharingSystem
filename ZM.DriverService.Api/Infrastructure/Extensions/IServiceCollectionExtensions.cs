@@ -1,6 +1,7 @@
 ﻿using Carter;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using ZM.DriverService.Api.Infrastructure.Consumers;
 using ZM.DriverService.Api.Persistence;
 using ZM.DriverService.Api.Persistence.Repositories;
 
@@ -37,6 +38,8 @@ namespace ZM.DriverService.Api.Infrastructure.Extensions
             services.AddMassTransit(busConfigurator =>
             {
                 busConfigurator.SetKebabCaseEndpointNameFormatter();
+
+                busConfigurator.AddConsumer<AssignRideToDriverConsumer>();
 
                 busConfigurator.UsingRabbitMq((context, configurator) =>
                 {

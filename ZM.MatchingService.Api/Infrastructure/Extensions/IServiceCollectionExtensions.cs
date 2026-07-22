@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using ZM.MatchingService.Api.Application.Cache;
 using ZM.MatchingService.Api.Infrastructure.Caches;
+using ZM.MatchingService.Api.Infrastructure.Consumers;
+using ZM.MatchingService.Api.Presentation.Consumers;
 
 namespace ZM.MatchingService.Api.Infrastructure.Extensions
 {
@@ -27,6 +29,11 @@ namespace ZM.MatchingService.Api.Infrastructure.Extensions
             services.AddMassTransit(busConfigurator =>
             {
                 busConfigurator.SetKebabCaseEndpointNameFormatter();
+
+                busConfigurator.AddConsumer<DriverAvailableConsumer>();
+                busConfigurator.AddConsumer<DriverLocationUpdatedConsumer>();
+                busConfigurator.AddConsumer<DriverUnavailableConsumer>();
+                busConfigurator.AddConsumer<FindDriverConsumer>();
 
                 busConfigurator.UsingRabbitMq((context, configurator) =>
                 {

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Quartz;
 using ZM.RideService.Api.Application.Outbox;
 using ZM.RideService.Api.Infrastructure.BackgroundJobs;
+using ZM.RideService.Api.Infrastructure.Consumers;
+using ZM.RideService.Api.Infrastructure.Sagas.RideCreated;
 using ZM.RideService.Api.Persistence;
 using ZM.RideService.Api.Persistence.Outbox;
 using ZM.RideService.Api.Persistence.Repositories;
@@ -43,6 +45,12 @@ namespace ZM.RideService.Api.Infrastructure.Extensions
             services.AddMassTransit(busConfigurator =>
             {
                 busConfigurator.SetKebabCaseEndpointNameFormatter();
+
+                busConfigurator.AddConsumer<AssignDriverConsumer>();
+                busConfigurator.AddConsumer<CompleteRideConsumer>();
+
+                busConfigurator.AddSagaStateMachine<RideCreatedSaga, RideCreatedSagaData>()
+                .InMemoryRepository();
 
                 busConfigurator.UsingRabbitMq((context, configurator) =>
                 {

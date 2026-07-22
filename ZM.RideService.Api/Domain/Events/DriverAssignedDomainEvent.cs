@@ -1,7 +1,7 @@
-﻿using ZM.RideService.Api.Domain.Entities;
-using ZM.RideService.Api.Domain.Primitives;
+﻿using ZM.RideService.Api.Domain.Primitives;
+using ZM.RideService.Api.Domain.ValueObjects;
 
 namespace ZM.RideService.Api.Domain.Events
 {
-    public record DriverAssignedDomainEvent(Ride Ride) : IDomainEvent;
+    public record DriverAssignedDomainEvent(Guid RideId, Guid DriverId) : IDomainEvent;
 }

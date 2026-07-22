@@ -1,6 +1,7 @@
 using Carter;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using ZM.PaymentService.Api.Infrastructure.Consumers;
 using ZM.PaymentService.Api.Persistence;
 using ZM.PaymentService.Api.Persistence.Repositories;
 
@@ -37,6 +38,8 @@ namespace ZM.PaymentService.Api.Infrastructure.Extensions
             services.AddMassTransit(busConfigurator =>
             {
                 busConfigurator.SetKebabCaseEndpointNameFormatter();
+
+                busConfigurator.AddConsumer<ProcessPaymentConsumer>();
 
                 busConfigurator.UsingRabbitMq((context, configurator) =>
                 {

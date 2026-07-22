@@ -56,7 +56,10 @@ namespace ZM.RideService.Api.Infrastructure.Sagas.RideCreated
                     })
                     .TransitionTo(AwaitingDriverMatch)
                     .Publish(context =>
-                        new FindDriverCommand(context.Message.RideId)));
+                        new FindDriverCommand(
+                            context.Message.RideId,
+                            context.Message.Latitude,
+                            context.Message.Longitude)));
 
             During(AwaitingDriverMatch,
                 When(DriverMatched)

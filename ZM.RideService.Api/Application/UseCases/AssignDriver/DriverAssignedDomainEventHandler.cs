@@ -17,8 +17,8 @@ namespace ZM.RideService.Api.Application.UseCases.AssignDriver
         public async Task Handle(DriverAssignedDomainEvent notification, CancellationToken cancellationToken)
         {
             await _bus.Publish(new DriverAssignedEvent(
-                notification.Ride.Id, 
-                notification.Ride.DriverId!.Value),
+                notification.RideId, 
+                notification.DriverId),
                 cancellationToken);
         }
     }

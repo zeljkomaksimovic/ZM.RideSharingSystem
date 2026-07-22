@@ -20,7 +20,7 @@ namespace ZM.MatchingService.Api.Infrastructure.Caches
 
         public async Task AddAvailableDriverAsync(Guid driverId, CancellationToken cancellationToken = default)
         {
-            await _database.SetAddAsync(
+            var a = await _database.SetAddAsync(
                 AvailableDriversSetKey,
                 driverId.ToString());
         }

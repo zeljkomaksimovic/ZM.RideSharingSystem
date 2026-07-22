@@ -1,4 +1,5 @@
 using MassTransit;
+using ZM.NotificationService.Api.Infrastructure.Consumers;
 
 namespace ZM.NotificationService.Api.Infrastructure.Extensions
 {
@@ -22,6 +23,10 @@ namespace ZM.NotificationService.Api.Infrastructure.Extensions
             services.AddMassTransit(busConfigurator =>
             {
                 busConfigurator.SetKebabCaseEndpointNameFormatter();
+
+                busConfigurator.AddConsumer<DriverAssignedConsumer>();
+                busConfigurator.AddConsumer<PaymentReceiptConsumer>();
+                busConfigurator.AddConsumer<RideCompletedConsumer>();
 
                 busConfigurator.UsingRabbitMq((context, configurator) =>
                 {

@@ -18,12 +18,12 @@ namespace ZM.RideService.Api.Application.UseCases.CompleteRide
         public async Task Handle(RideCompletedDomainEvent notification, CancellationToken cancellationToken)
         {
             await _bus.Publish(new RideCompletedEvent(
-                notification.Ride.Id), 
+                notification.RideId), 
                 cancellationToken);
 
             await _bus.Publish(new RideCompletedNotificationCommand(
-                notification.Ride.Id,
-                notification.Ride.Rider.Email), 
+                notification.RideId,
+                notification.Rider.Email), 
                 cancellationToken);
         }
     }

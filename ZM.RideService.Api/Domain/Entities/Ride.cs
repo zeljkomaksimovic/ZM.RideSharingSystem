@@ -1,4 +1,5 @@
 ﻿#nullable disable
+using Newtonsoft.Json;
 using ZM.RideService.Api.Domain.Enums;
 using ZM.RideService.Api.Domain.ErrorMessages;
 using ZM.RideService.Api.Domain.Events;
@@ -10,6 +11,7 @@ namespace ZM.RideService.Api.Domain.Entities
 {
     public class Ride : AggregateRoot
     {
+        [JsonConstructor]
         private Ride()
         {
         }
@@ -78,7 +80,11 @@ namespace ZM.RideService.Api.Domain.Entities
                 RideStatus.Requested,
                 createdAtUtc);
 
-            ride.Raise(new RideCreatedDomainEvent(ride));
+            ride.Raise(new RideCreatedDomainEvent(
+                ride.Id, 
+                ride.PickupLocation.Latitude,
+                ride.PickupLocation.Longitude, 
+                ride.Rider));
 
             return ride;
         }
@@ -94,7 +100,7 @@ namespace ZM.RideService.Api.Domain.Entities
             Status = RideStatus.DriverAssigned;
             AssignedAtUtc = assignedAtUtc;
 
-            Raise(new DriverAssignedDomainEvent(this));
+            Raise(new DriverAssignedDomainEvent(Id, DriverId.Value));
 
             return Result.Success();
         }
@@ -123,7 +129,7 @@ namespace ZM.RideService.Api.Domain.Entities
             ActualFare = actualFare;
             CompletedAtUtc = completedAtUtc;
 
-            Raise(new RideCompletedDomainEvent(this));
+            Raise(new RideCompletedDomainEvent(Id, Rider));
 
             return Result.Success();
         }
@@ -169,7 +175,7 @@ namespace ZM.RideService.Api.Domain.Entities
                 assignedAtUtc,
                 startedAtUtc,
                 completedAtUtc,
-                cancelledAtUtc);           
+                cancelledAtUtc);
         }
     }
 }

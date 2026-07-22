@@ -73,9 +73,7 @@ namespace ZM.DriverService.Api.Domain.Entities
             }
 
             Status = DriverStatus.Available;
-            LastStatusChangeAtUtc = changedAtUtc;
-
-            Raise(new DriverAvailableDomainEvent(Id));
+            LastStatusChangeAtUtc = changedAtUtc;         
 
             return Result.Success();
         }
@@ -88,9 +86,7 @@ namespace ZM.DriverService.Api.Domain.Entities
             }
 
             Status = DriverStatus.Offline;
-            LastStatusChangeAtUtc = changedAtUtc;
-
-            Raise(new DriverUnavailableDomainEvent(Id));
+            LastStatusChangeAtUtc = changedAtUtc;           
 
             return Result.Success();
         }
@@ -105,8 +101,6 @@ namespace ZM.DriverService.Api.Domain.Entities
             CurrentRideId = rideId;
             Status = DriverStatus.Assigned;
             LastStatusChangeAtUtc = assignedAtUtc;
-
-            Raise(new RideAssignedDomainEvent(rideId, Id));
 
             return Result.Success();
         }
