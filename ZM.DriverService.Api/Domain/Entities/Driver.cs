@@ -1,4 +1,5 @@
-﻿using ZM.DriverService.Api.Domain.Enums;
+﻿using Microsoft.CodeAnalysis;
+using ZM.DriverService.Api.Domain.Enums;
 using ZM.DriverService.Api.Domain.ErrorMessages;
 using ZM.DriverService.Api.Domain.Events;
 using ZM.DriverService.Api.Domain.OperationResult;
@@ -65,7 +66,7 @@ namespace ZM.DriverService.Api.Domain.Entities
                 createdAtUtc);
         }
 
-        public Result SetAvailable(DateTime changedAtUtc)
+        public Result SetAvailable(DriverLocation currentLocation, DateTime changedAtUtc)
         {
             if (Status == DriverStatus.Available)
             {
@@ -73,6 +74,7 @@ namespace ZM.DriverService.Api.Domain.Entities
             }
 
             Status = DriverStatus.Available;
+            CurrentLocation = currentLocation;
             LastStatusChangeAtUtc = changedAtUtc;         
 
             return Result.Success();

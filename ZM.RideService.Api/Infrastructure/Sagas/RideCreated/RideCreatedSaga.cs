@@ -1,5 +1,6 @@
 ﻿#nullable disable
 using MassTransit;
+using ZM.RideSharingSystem.Contracts.Commands.Driver;
 using ZM.RideSharingSystem.Contracts.Commands.Matching;
 using ZM.RideSharingSystem.Contracts.Commands.Notification;
 using ZM.RideSharingSystem.Contracts.Commands.Payment;
@@ -66,6 +67,10 @@ namespace ZM.RideService.Api.Infrastructure.Sagas.RideCreated
                     .TransitionTo(AwaitingDriverAssignment)
                     .Publish(context =>
                         new AssignDriverToRideCommand(
+                            context.Message.RideId,
+                            context.Message.DriverId))
+                    .Publish(context =>
+                        new AssignRideToDriverCommand(
                             context.Message.RideId,
                             context.Message.DriverId)));
 

@@ -5,6 +5,7 @@ using ZM.DriverService.Api.Application.UnitOfWork;
 using ZM.DriverService.Api.Domain.ErrorMessages;
 using ZM.DriverService.Api.Domain.Events;
 using ZM.DriverService.Api.Domain.OperationResult;
+using ZM.DriverService.Api.Domain.ValueObjects;
 
 namespace ZM.DriverService.Api.Application.UseCases.SetDriverAvailable
 {
@@ -35,7 +36,7 @@ namespace ZM.DriverService.Api.Application.UseCases.SetDriverAvailable
                 return Result.Failure(Errors.Driver.DriverNotFound());
             }
 
-            var setAvailableResult = driver.SetAvailable(_dateTimeProvider.UtcNow);
+            var setAvailableResult = driver.SetAvailable(new DriverLocation(request.Latitude, request.Longitude), _dateTimeProvider.UtcNow);
             if (setAvailableResult.IsSuccessful is false)
             {
                 return setAvailableResult;
