@@ -40,6 +40,8 @@ namespace ZM.DriverService.Api.Infrastructure.Extensions
                 busConfigurator.SetKebabCaseEndpointNameFormatter();
 
                 busConfigurator.AddConsumer<AssignRideToDriverConsumer>();
+                busConfigurator.AddConsumer<DriverCompleteRideConsumer>();
+                busConfigurator.AddConsumer<DriverStartRideConsumer>();
 
                 busConfigurator.UsingRabbitMq((context, configurator) =>
                 {

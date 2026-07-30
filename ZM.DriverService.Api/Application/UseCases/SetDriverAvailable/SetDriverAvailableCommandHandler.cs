@@ -46,7 +46,15 @@ namespace ZM.DriverService.Api.Application.UseCases.SetDriverAvailable
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await _publisher.Publish(new DriverAvailableDomainEvent(driver.Id), cancellationToken);
+            await _publisher.Publish(new DriverAvailableDomainEvent(
+                driver.Id),
+                cancellationToken);
+
+            await _publisher.Publish(new DriverLocationUpdatedDomainEvent(
+                driver.Id,
+                request.Latitude,
+                request.Longitude),
+                cancellationToken);
 
             return Result.Success();
         }

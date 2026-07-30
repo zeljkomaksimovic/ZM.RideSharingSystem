@@ -11,18 +11,18 @@ namespace ZM.RideService.Api.Domain.Entities
 {
     public class Ride : AggregateRoot
     {
-        [JsonConstructor]
         private Ride()
         {
         }
 
-        private Ride(Guid rideId, RiderInfo rider, RideLocation pickupLocation, RideLocation destinationLocation, RideStatus status, DateTime createdAtUtc)
+        private Ride(Guid rideId, RiderInfo rider, RideLocation pickupLocation, RideLocation destinationLocation, RideStatus status, decimal? estimatedFare, DateTime createdAtUtc)
         {
             Id = rideId;
             Rider = rider;
             PickupLocation = pickupLocation;
             DestinationLocation = destinationLocation;
             Status = status;
+            EstimatedFare = estimatedFare;
             CreatedAtUtc = createdAtUtc;
         }
 
@@ -70,7 +70,7 @@ namespace ZM.RideService.Api.Domain.Entities
         public DateTime? CompletedAtUtc { get; private set; }
         public DateTime? CancelledAtUtc { get; private set; }
 
-        public static Ride Create(Guid rideId, RiderInfo rider, RideLocation pickupLocation, RideLocation destinationLocation, DateTime createdAtUtc)
+        public static Ride Create(Guid rideId, RiderInfo rider, RideLocation pickupLocation, RideLocation destinationLocation, decimal? estimatedFare, DateTime createdAtUtc)
         {
             var ride = new Ride(
                 rideId,
@@ -78,6 +78,7 @@ namespace ZM.RideService.Api.Domain.Entities
                 pickupLocation,
                 destinationLocation,
                 RideStatus.Requested,
+                estimatedFare,
                 createdAtUtc);
 
             ride.Raise(new RideCreatedDomainEvent(
@@ -114,6 +115,8 @@ namespace ZM.RideService.Api.Domain.Entities
 
             Status = RideStatus.InProgress;
             StartedAtUtc = startedAtUtc;
+
+            Raise(new RideStartedDomainEvent(Id));
 
             return Result.Success();
         }

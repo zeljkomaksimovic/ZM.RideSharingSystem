@@ -12,21 +12,16 @@ namespace ZM.RideService.Api.Infrastructure.Sagas.RideCreated
     public class RideCreatedSaga : MassTransitStateMachine<RideCreatedSagaData>
     {
         public State AwaitingDriverMatch { get; private set; }
-
         public State AwaitingDriverAssignment { get; private set; }
-
+        public State AwaitingRideToStart { get; private set; }
         public State AwaitingRideCompletion { get; private set; }
-
         public State AwaitingPayment { get; private set; }
 
         public Event<RideCreatedEvent> RideCreated { get; private set; }
-
         public Event<DriverMatchedEvent> DriverMatched { get; private set; }
-
         public Event<DriverAssignedEvent> DriverAssigned { get; private set; }
-
+        public Event<RideStartedEvent> RideStarted { get; private set; }
         public Event<RideCompletedEvent> RideCompleted { get; private set; }
-
         public Event<PaymentCompletedEvent> PaymentCompleted { get; private set; }
 
         public RideCreatedSaga()
@@ -40,6 +35,9 @@ namespace ZM.RideService.Api.Infrastructure.Sagas.RideCreated
                 x => x.CorrelateById(m => m.Message.RideId));
 
             Event(() => DriverAssigned,
+                x => x.CorrelateById(m => m.Message.RideId));
+
+            Event(() => RideStarted,
                 x => x.CorrelateById(m => m.Message.RideId));
 
             Event(() => RideCompleted,
@@ -76,12 +74,22 @@ namespace ZM.RideService.Api.Infrastructure.Sagas.RideCreated
 
             During(AwaitingDriverAssignment,
                 When(DriverAssigned)
-                    .TransitionTo(AwaitingRideCompletion)
+                    .Then(context =>
+                    {
+                        context.Saga.DriverId = context.Message.DriverId;
+                    })
+                    .TransitionTo(AwaitingRideToStart)
                     .Publish(context =>
                         new DriverAssignedNotificationCommand(
                             context.Message.RideId,
                             context.Message.DriverId,
                             context.Saga.RecipientEmail)));
+
+            During(AwaitingRideToStart,
+                When(RideStarted)
+                    .TransitionTo(AwaitingRideCompletion)
+                    .Publish(context =>
+                        new DriverStartRideEvent(context.Saga.DriverId)));
 
             During(AwaitingRideCompletion,
                 When(RideCompleted)
@@ -90,6 +98,8 @@ namespace ZM.RideService.Api.Infrastructure.Sagas.RideCreated
                         new RideCompletedNotificationCommand(
                             context.Message.RideId,
                             context.Saga.RecipientEmail))
+                    .Publish(context =>
+                        new DriverCompleteRideEvent(context.Saga.DriverId))
                     .Publish(context =>
                         new ProcessPaymentCommand(context.Message.RideId)));
 

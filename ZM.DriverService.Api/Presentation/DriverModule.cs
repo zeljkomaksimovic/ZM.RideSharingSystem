@@ -6,7 +6,6 @@ using ZM.DriverService.Api.Application.UseCases.RegisterDriver;
 using ZM.DriverService.Api.Application.UseCases.SetDriverAvailable;
 using ZM.DriverService.Api.Application.UseCases.SetDriverUnavailable;
 using ZM.DriverService.Api.Application.UseCases.UpdateDriverLocation;
-using ZM.DriverService.Api.Application.UseCases.StartRide;
 
 namespace ZM.DriverService.Api.Presentation
 {
@@ -39,12 +38,6 @@ namespace ZM.DriverService.Api.Presentation
             });
 
             app.MapPut("api/UpdateDriverLocation", async ([FromBody] UpdateDriverLocationCommand request, ISender sender) =>
-            {
-                var driver = await sender.Send(request);
-                return Results.Ok(driver);
-            });
-
-            app.MapPut("api/StartRide", async ([FromBody] StartRideCommand request, ISender sender) =>
             {
                 var driver = await sender.Send(request);
                 return Results.Ok(driver);

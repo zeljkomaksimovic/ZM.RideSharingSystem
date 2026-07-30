@@ -1,7 +1,6 @@
 ﻿using ZM.DriverService.Api.Application.DateTimeProvider;
 using ZM.DriverService.Api.Application.Repository;
 using ZM.DriverService.Api.Application.UnitOfWork;
-using ZM.DriverService.Api.Application.UseCases.StartRide;
 using ZM.DriverService.Api.Domain.ErrorMessages;
 using ZM.DriverService.Api.Domain.OperationResult;
 
@@ -20,7 +19,7 @@ namespace ZM.DriverService.Api.Application.UseCases.CompleteRide
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task<Result> Handle(StartRideCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(CompleteRideCommand request, CancellationToken cancellationToken)
         {
             var driver = await _driverRepository.GetDriverByIdAsync(request.DriverId, cancellationToken);
             if (driver == null)

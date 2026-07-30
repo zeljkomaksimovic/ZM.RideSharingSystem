@@ -75,7 +75,8 @@ namespace ZM.DriverService.Api.Domain.Entities
 
             Status = DriverStatus.Available;
             CurrentLocation = currentLocation;
-            LastStatusChangeAtUtc = changedAtUtc;         
+            LastStatusChangeAtUtc = changedAtUtc;
+            LastLocationUpdateAtUtc = changedAtUtc;
 
             return Result.Success();
         }

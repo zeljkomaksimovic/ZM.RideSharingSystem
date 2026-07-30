@@ -3,8 +3,10 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
 using ZM.RideService.Api.Application.Outbox;
+using ZM.RideService.Api.Application.Pricing;
 using ZM.RideService.Api.Infrastructure.BackgroundJobs;
 using ZM.RideService.Api.Infrastructure.Consumers;
+using ZM.RideService.Api.Infrastructure.Pricing;
 using ZM.RideService.Api.Infrastructure.Sagas.RideCreated;
 using ZM.RideService.Api.Persistence;
 using ZM.RideService.Api.Persistence.Outbox;
@@ -22,6 +24,7 @@ namespace ZM.RideService.Api.Infrastructure.Extensions
             RegisterQuartz(services);
             RegisterCarter(services);
             RegisterDomainEventCollector(services);
+            RegisterPricingServices(services);
             RegisterUnitOfWorks(services);
             RegisterDateTimeProviders(services);
             RegisterQueries(services);
@@ -48,6 +51,7 @@ namespace ZM.RideService.Api.Infrastructure.Extensions
 
                 busConfigurator.AddConsumer<AssignDriverConsumer>();
                 busConfigurator.AddConsumer<CompleteRideConsumer>();
+                busConfigurator.AddConsumer<RideStartedConsumer>();
 
                 busConfigurator.AddSagaStateMachine<RideCreatedSaga, RideCreatedSagaData>()
                 .InMemoryRepository();
@@ -93,6 +97,12 @@ namespace ZM.RideService.Api.Infrastructure.Extensions
         private static void RegisterDomainEventCollector(IServiceCollection services)
         {
             services.AddScoped<IDomainEventCollector, DomainEventCollector>();
+        }
+
+        private static void RegisterPricingServices(IServiceCollection services)
+        {
+            services.AddScoped<IFareCalculator, FareCalculator>();
+            services.AddScoped<IFareEstimator, FareEstimator>();
         }
 
         private static void RegisterUnitOfWorks(IServiceCollection services)

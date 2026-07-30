@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using ZM.RideService.Api.Application.DateTimeProvider;
+using ZM.RideService.Api.Application.Pricing;
 using ZM.RideService.Api.Application.Repository;
 using ZM.RideService.Api.Application.UnitOfWork;
-using ZM.RideService.Api.Domain.Entities;
 using ZM.RideService.Api.Domain.ErrorMessages;
 using ZM.RideService.Api.Domain.OperationResult;
 
@@ -12,12 +12,14 @@ namespace ZM.RideService.Api.Application.UseCases.CompleteRide
     {
         private readonly IRideRepository _rideRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFareCalculator _fareCalculator;
         private readonly IDateTimeProvider _dateTimeProvider;
 
-        public CompleteRideCommandHandler(IRideRepository rideRepository, IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider)
+        public CompleteRideCommandHandler(IRideRepository rideRepository, IUnitOfWork unitOfWork, IFareCalculator fareCalculator, IDateTimeProvider dateTimeProvider)
         {
             _rideRepository = rideRepository;
             _unitOfWork = unitOfWork;
+            _fareCalculator = fareCalculator;
             _dateTimeProvider = dateTimeProvider;
         }
 
@@ -29,8 +31,11 @@ namespace ZM.RideService.Api.Application.UseCases.CompleteRide
                 return Result.Failure(Errors.Ride.RideNotFound());
             }
 
-            //TODO: Add calculation for the ride cost and update the ride entity with the cost before completing the ride.
-            var completeRideResult = ride.CompleteRide(0, _dateTimeProvider.UtcNow);
+            var completedAt = _dateTimeProvider.UtcNow;
+
+            var finalFare = await _fareCalculator.CalculateAsync(ride, completedAt, cancellationToken);
+
+            var completeRideResult = ride.CompleteRide(finalFare, completedAt);
             if (completeRideResult.IsSuccessful is false)
             {
                 return completeRideResult;
