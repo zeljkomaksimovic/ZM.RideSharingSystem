@@ -20,7 +20,7 @@ namespace ZM.NotificationService.Api.Infrastructure.Extensions
         {
             services.AddDbContext<NotificationDbContext>(options => options
                .UseInMemoryDatabase("Notification")
-               .UseQueryTrackingBehavior(Microsoft.EntityFrameworkCore.QueryTrackingBehavior.TrackAll), ServiceLifetime.Scoped);
+               .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll), ServiceLifetime.Scoped);
         }
 
         private static void RegisterMediatR(IServiceCollection services)

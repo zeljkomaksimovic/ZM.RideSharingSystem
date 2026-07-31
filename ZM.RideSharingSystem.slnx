@@ -1,11 +1,18 @@
 <Solution>
-  <Project Path="../ZM.RideSharingSystem.Contracts/ZM.RideSharingSystem.Contracts.csproj" Id="63e9ac75-4181-457f-a662-81ef5c28f093" />
+  <Folder Name="/contracts/">
+    <Project Path="../ZM.RideSharingSystem.Contracts/ZM.RideSharingSystem.Contracts.csproj" Id="63e9ac75-4181-457f-a662-81ef5c28f093" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="ZM.DriverService.Api/ZM.DriverService.Api.csproj" Id="7fbc3ec9-9598-49e3-9c4a-ca307bd18a6d" />
+    <Project Path="ZM.MatchingService.Api/ZM.MatchingService.Api.csproj" Id="cae4c782-6b1b-4ae6-aaa9-7fad0c321236" />
+    <Project Path="ZM.NotificationService.Api/ZM.NotificationService.Api.csproj" Id="6ab59881-08a4-43be-bb05-2708f1530431" />
+    <Project Path="ZM.PaymentService.Api/ZM.PaymentService.Api.csproj" Id="9555c98e-3549-4fe8-bd37-f7a3996f0e11" />
+    <Project Path="ZM.RideService.Api/ZM.RideService.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="ZM.RideService.Api.UnitTests/ZM.RideService.Api.UnitTests.csproj" Id="c64b1bd8-4c67-4a03-b387-30436ba5f3d8" />
+  </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>
-  <Project Path="ZM.DriverService.Api/ZM.DriverService.Api.csproj" Id="7fbc3ec9-9598-49e3-9c4a-ca307bd18a6d" />
-  <Project Path="ZM.MatchingService.Api/ZM.MatchingService.Api.csproj" Id="cae4c782-6b1b-4ae6-aaa9-7fad0c321236" />
-  <Project Path="ZM.NotificationService.Api/ZM.NotificationService.Api.csproj" Id="6ab59881-08a4-43be-bb05-2708f1530431" />
-  <Project Path="ZM.PaymentService.Api/ZM.PaymentService.Api.csproj" Id="9555c98e-3549-4fe8-bd37-f7a3996f0e11" />
-  <Project Path="ZM.RideService.Api/ZM.RideService.Api.csproj" />
 </Solution>
