@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using MassTransit;
 using ZM.NotificationService.Api.Infrastructure.Consumers;
+using ZM.NotificationService.Api.Persistence;
 
 namespace ZM.NotificationService.Api.Infrastructure.Extensions
 {
@@ -7,10 +9,18 @@ namespace ZM.NotificationService.Api.Infrastructure.Extensions
     {
         public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
+            RegisterEntityFramework(services);
             RegisterMediatR(services);
             RegisterMassTransit(services, configuration);
             RegisterTemplates(services);
             RegisterSenders(services);
+        }
+
+        private static void RegisterEntityFramework(IServiceCollection services)
+        {
+            services.AddDbContext<NotificationDbContext>(options => options
+               .UseInMemoryDatabase("Notification")
+               .UseQueryTrackingBehavior(Microsoft.EntityFrameworkCore.QueryTrackingBehavior.TrackAll), ServiceLifetime.Scoped);
         }
 
         private static void RegisterMediatR(IServiceCollection services)
