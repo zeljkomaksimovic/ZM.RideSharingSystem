@@ -68,6 +68,11 @@ namespace ZM.DriverService.Api.Domain.Entities
 
         public Result SetAvailable(DriverLocation currentLocation, DateTime changedAtUtc)
         {
+            if (Status == DriverStatus.InRide)
+            {
+                return Result.Failure(Errors.Driver.DriverIsCurrentlyInRide());
+            }
+
             if (Status == DriverStatus.Available)
             {
                 return Result.Success();
