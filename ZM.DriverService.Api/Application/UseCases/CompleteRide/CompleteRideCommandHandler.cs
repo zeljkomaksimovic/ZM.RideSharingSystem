@@ -1,4 +1,5 @@
-﻿using ZM.DriverService.Api.Application.DateTimeProvider;
+﻿using MediatR;
+using ZM.DriverService.Api.Application.DateTimeProvider;
 using ZM.DriverService.Api.Application.Repository;
 using ZM.DriverService.Api.Application.UnitOfWork;
 using ZM.DriverService.Api.Domain.ErrorMessages;
@@ -6,7 +7,7 @@ using ZM.DriverService.Api.Domain.OperationResult;
 
 namespace ZM.DriverService.Api.Application.UseCases.CompleteRide
 {
-    public class CompleteRideCommandHandler
+    public class CompleteRideCommandHandler : IRequestHandler<CompleteRideCommand, Result>
     {
         private readonly IDriverRepository _driverRepository;
         private readonly IUnitOfWork _unitOfWork;

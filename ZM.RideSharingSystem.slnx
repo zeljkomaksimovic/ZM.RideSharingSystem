@@ -10,6 +10,7 @@
     <Project Path="ZM.RideService.Api/ZM.RideService.Api.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="ZM.DriverService.Api.UnitTests/ZM.DriverService.Api.UnitTests.csproj" Id="5dc5dc71-7c9f-476c-8981-2baf12a0b976" />
     <Project Path="ZM.RideService.Api.UnitTests/ZM.RideService.Api.UnitTests.csproj" Id="c64b1bd8-4c67-4a03-b387-30436ba5f3d8" />
   </Folder>
   <Project Path="docker-compose.dcproj">
