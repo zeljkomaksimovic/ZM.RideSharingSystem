@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ZM.RideSharingSystem.Contracts\ZM.RideSharingSystem.Contracts.csproj" />
+    <ProjectReference Include="..\ZM.RideSharingSystem.Contracts\ZM.RideSharingSystem.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ZM.RideSharingSystem.Contracts\ZM.RideSharingSystem.Contracts.csproj" />
     <ProjectReference Include="..\ZM.DriverService.Api\ZM.DriverService.Api.csproj" />
+    <ProjectReference Include="..\ZM.RideSharingSystem.Contracts\ZM.RideSharingSystem.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

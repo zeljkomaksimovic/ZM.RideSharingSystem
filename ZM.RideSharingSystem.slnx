@@ -1,6 +1,6 @@
 <Solution>
   <Folder Name="/contracts/">
-    <Project Path="../ZM.RideSharingSystem.Contracts/ZM.RideSharingSystem.Contracts.csproj" Id="63e9ac75-4181-457f-a662-81ef5c28f093" />
+    <Project Path="ZM.RideSharingSystem.Contracts/ZM.RideSharingSystem.Contracts.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="ZM.DriverService.Api/ZM.DriverService.Api.csproj" Id="7fbc3ec9-9598-49e3-9c4a-ca307bd18a6d" />
