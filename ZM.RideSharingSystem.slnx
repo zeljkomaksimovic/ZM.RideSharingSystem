@@ -11,6 +11,8 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="ZM.DriverService.Api.UnitTests/ZM.DriverService.Api.UnitTests.csproj" Id="5dc5dc71-7c9f-476c-8981-2baf12a0b976" />
+    <Project Path="ZM.MatchingService.Api.UnitTests/ZM.MatchingService.Api.UnitTests.csproj" Id="cad0daa1-bb65-42b8-9919-76cfaf87efc8" />
+    <Project Path="ZM.NotificationService.Api.UnitTests/ZM.NotificationService.Api.UnitTests.csproj" Id="e290baf7-5564-4d12-a287-3f874d5c43d6" />
     <Project Path="ZM.PaymentService.Api.UnitTests/ZM.PaymentService.Api.UnitTests.csproj" Id="d27fabc3-c7ce-4d38-8637-1ce8394b2e39" />
     <Project Path="ZM.RideService.Api.UnitTests/ZM.RideService.Api.UnitTests.csproj" Id="c64b1bd8-4c67-4a03-b387-30436ba5f3d8" />
   </Folder>
