@@ -2,7 +2,7 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
-using ZM.RideService.Api.Application.Outbox;
+using ZM.RideService.Api.Application.DomainEventCollector;
 using ZM.RideService.Api.Application.Pricing;
 using ZM.RideService.Api.Infrastructure.BackgroundJobs;
 using ZM.RideService.Api.Infrastructure.Consumers;

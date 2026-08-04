@@ -21,8 +21,9 @@ namespace ZM.DriverService.Api.UnitTests.Builders
                 email,
                 phone,
                 currentLocation: null,
-                DriverStatus.Offline,
-                createdAt ?? DateTime.UtcNow,
+                status: DriverStatus.Offline,
+                currentRideId: null,
+                createdAtUtc: createdAt ?? DateTime.UtcNow,
                 lastLocationUpdateAtUtc: null,
                 lastStatusChangeAtUtc: null);
         }
@@ -42,17 +43,21 @@ namespace ZM.DriverService.Api.UnitTests.Builders
                 "123",
                 location ?? new DriverLocation(1.0, 2.0),
                 DriverStatus.Available,
-                createdAt ?? DateTime.UtcNow.AddMinutes(-10),
-                locationUpdatedAt ?? DateTime.UtcNow.AddMinutes(-5),
-                statusChangedAt ?? DateTime.UtcNow.AddMinutes(-5));
+                currentRideId: null,
+                createdAtUtc: createdAt ?? DateTime.UtcNow.AddMinutes(-10),
+                lastLocationUpdateAtUtc: locationUpdatedAt ?? DateTime.UtcNow.AddMinutes(-5),
+                lastStatusChangeAtUtc: statusChangedAt ?? DateTime.UtcNow.AddMinutes(-5));
         }
 
         public static Driver BuildAssigned(
             Guid? id = null,
             Guid? rideId = null,
-            DriverLocation? location = null)
+            DriverLocation? location = null,
+            DateTime? createdAt = null,
+            DateTime? statusChangedAt = null,
+            DateTime? locationUpdatedAt = null)
         {
-            var driver = Driver.Rehydrate(
+            return Driver.Rehydrate(
                 id ?? Guid.NewGuid(),
                 "First",
                 "Last",
@@ -60,23 +65,21 @@ namespace ZM.DriverService.Api.UnitTests.Builders
                 "123",
                 location ?? new DriverLocation(1.0, 2.0),
                 DriverStatus.Assigned,
-                DateTime.UtcNow.AddMinutes(-15),
-                DateTime.UtcNow.AddMinutes(-1),
-                DateTime.UtcNow.AddMinutes(-2));
-
-            driver.GetType()
-                .GetProperty(nameof(Driver.CurrentRideId))!
-                .SetValue(driver, rideId ?? Guid.NewGuid());
-
-            return driver;
+                rideId ?? Guid.NewGuid(),
+                createdAtUtc: createdAt ?? DateTime.UtcNow.AddMinutes(-20),
+                lastLocationUpdateAtUtc: locationUpdatedAt ?? DateTime.UtcNow.AddMinutes(-2),
+                lastStatusChangeAtUtc: statusChangedAt ?? DateTime.UtcNow.AddMinutes(-2));
         }
 
         public static Driver BuildInRide(
             Guid? id = null,
             Guid? rideId = null,
-            DriverLocation? location = null)
+            DriverLocation? location = null,
+            DateTime? createdAt = null,
+            DateTime? statusChangedAt = null,
+            DateTime? locationUpdatedAt = null)
         {
-            var driver = Driver.Rehydrate(
+            return Driver.Rehydrate(
                 id ?? Guid.NewGuid(),
                 "First",
                 "Last",
@@ -84,15 +87,10 @@ namespace ZM.DriverService.Api.UnitTests.Builders
                 "123",
                 location ?? new DriverLocation(1.0, 2.0),
                 DriverStatus.InRide,
-                DateTime.UtcNow.AddMinutes(-20),
-                DateTime.UtcNow.AddMinutes(-1),
-                DateTime.UtcNow.AddMinutes(-2));
-
-            driver.GetType()
-                .GetProperty(nameof(Driver.CurrentRideId))!
-                .SetValue(driver, rideId ?? Guid.NewGuid());
-
-            return driver;
+                rideId ?? Guid.NewGuid(),
+                createdAtUtc: createdAt ?? DateTime.UtcNow.AddMinutes(-30),
+                lastLocationUpdateAtUtc: locationUpdatedAt ?? DateTime.UtcNow.AddMinutes(-2),
+                lastStatusChangeAtUtc: statusChangedAt ?? DateTime.UtcNow.AddMinutes(-1));
         }
     }
 }
