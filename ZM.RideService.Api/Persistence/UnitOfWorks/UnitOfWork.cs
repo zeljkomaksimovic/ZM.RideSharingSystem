@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json;
 using System.Data;
-using ZM.RideService.Api.Application.Outbox;
+using ZM.RideService.Api.Application.DomainEventCollector;
 using ZM.RideService.Api.Application.UnitOfWork;
 using ZM.RideService.Api.Persistence.Outbox;
 
@@ -50,7 +50,7 @@ namespace ZM.RideService.Api.Persistence.UnitOfWorks
             
             _dbContext.OutboxMessages.AddRange(outboxMessages);
 
-            _domainEventCollector.ClearEvents();
+            _domainEventCollector.ClearDomainEvents();
         }
     }
 }

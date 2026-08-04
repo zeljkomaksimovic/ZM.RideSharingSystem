@@ -9,7 +9,7 @@ using ZM.RideService.Api.Infrastructure.Consumers;
 using ZM.RideService.Api.Infrastructure.Pricing;
 using ZM.RideService.Api.Infrastructure.Sagas.RideCreated;
 using ZM.RideService.Api.Persistence;
-using ZM.RideService.Api.Persistence.Outbox;
+using ZM.RideService.Api.Persistence.DomainEventCollector;
 using ZM.RideService.Api.Persistence.Repositories;
 
 namespace ZM.RideService.Api.Infrastructure.Extensions

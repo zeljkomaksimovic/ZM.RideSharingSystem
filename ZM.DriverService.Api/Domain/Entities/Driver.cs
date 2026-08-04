@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using MediatR;
+using Microsoft.CodeAnalysis;
 using ZM.DriverService.Api.Domain.Enums;
 using ZM.DriverService.Api.Domain.ErrorMessages;
 using ZM.DriverService.Api.Domain.Events;
@@ -83,6 +84,9 @@ namespace ZM.DriverService.Api.Domain.Entities
             LastStatusChangeAtUtc = changedAtUtc;
             LastLocationUpdateAtUtc = changedAtUtc;
 
+            Raise(new DriverAvailableDomainEvent(Id));
+            Raise(new DriverLocationUpdatedDomainEvent(Id, currentLocation.Latitude, currentLocation.Longitude));
+
             return Result.Success();
         }
 
@@ -94,7 +98,9 @@ namespace ZM.DriverService.Api.Domain.Entities
             }
 
             Status = DriverStatus.Offline;
-            LastStatusChangeAtUtc = changedAtUtc;           
+            LastStatusChangeAtUtc = changedAtUtc;
+
+            Raise(new DriverUnavailableDomainEvent(Id));
 
             return Result.Success();
         }
@@ -109,6 +115,8 @@ namespace ZM.DriverService.Api.Domain.Entities
             CurrentRideId = rideId;
             Status = DriverStatus.Assigned;
             LastStatusChangeAtUtc = assignedAtUtc;
+
+            Raise(new RideAssignedDomainEvent(rideId, Id));
 
             return Result.Success();
         }
@@ -144,6 +152,8 @@ namespace ZM.DriverService.Api.Domain.Entities
         {
             CurrentLocation = location;
             LastLocationUpdateAtUtc = updatedAtUtc;
+
+            Raise(new DriverLocationUpdatedDomainEvent(Id, location.Latitude, location.Longitude));
         }
 
         public static Driver Rehydrate(
@@ -154,6 +164,7 @@ namespace ZM.DriverService.Api.Domain.Entities
             string phoneNumber,
             DriverLocation? currentLocation,
             DriverStatus status,
+            Guid? currentRideId,
             DateTime createdAtUtc,
             DateTime? lastLocationUpdateAtUtc,
             DateTime? lastStatusChangeAtUtc)
@@ -165,6 +176,7 @@ namespace ZM.DriverService.Api.Domain.Entities
                 LastName = lastName,
                 Email = email,
                 PhoneNumber = phoneNumber,
+                CurrentRideId = currentRideId,
                 CurrentLocation = currentLocation,
                 Status = status,
                 CreatedAtUtc = createdAtUtc,

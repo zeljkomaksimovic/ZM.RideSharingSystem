@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ZM.RideService.Api.Application.Outbox;
+using ZM.RideService.Api.Application.DomainEventCollector;
 using ZM.RideService.Api.Application.Repository;
 using ZM.RideService.Api.Domain.Entities;
 using ZM.RideService.Api.Domain.ValueObjects;
@@ -28,7 +28,6 @@ namespace ZM.RideService.Api.Persistence.Repositories
             dbRide.AssignedAtUtc = ride.AssignedAtUtc;
 
             _domainEventCollector.AddEvents(ride.DomainEvents);
-
             ride.ClearDomainEvents();
         }
 
@@ -42,7 +41,6 @@ namespace ZM.RideService.Api.Persistence.Repositories
             dbRide.CancelledAtUtc = ride.CancelledAtUtc;
 
             _domainEventCollector.AddEvents(ride.DomainEvents);
-
             ride.ClearDomainEvents();
         }
 
@@ -57,7 +55,6 @@ namespace ZM.RideService.Api.Persistence.Repositories
             dbRide.CompletedAtUtc = ride.CompletedAtUtc;
 
             _domainEventCollector.AddEvents(ride.DomainEvents);
-
             ride.ClearDomainEvents();
         }
 
@@ -90,7 +87,6 @@ namespace ZM.RideService.Api.Persistence.Repositories
             await _dbContext.Rides.AddAsync(dbRide, cancellationToken);
 
             _domainEventCollector.AddEvents(ride.DomainEvents);
-
             ride.ClearDomainEvents();
         }
 
@@ -137,7 +133,6 @@ namespace ZM.RideService.Api.Persistence.Repositories
             dbRide.StartedAtUtc = ride.StartedAtUtc;
 
             _domainEventCollector.AddEvents(ride.DomainEvents);
-
             ride.ClearDomainEvents();
         }
     }

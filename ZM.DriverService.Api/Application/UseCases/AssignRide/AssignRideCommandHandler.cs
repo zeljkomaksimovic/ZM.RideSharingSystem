@@ -3,7 +3,6 @@ using ZM.DriverService.Api.Application.DateTimeProvider;
 using ZM.DriverService.Api.Application.Repository;
 using ZM.DriverService.Api.Application.UnitOfWork;
 using ZM.DriverService.Api.Domain.ErrorMessages;
-using ZM.DriverService.Api.Domain.Events;
 using ZM.DriverService.Api.Domain.OperationResult;
 
 namespace ZM.DriverService.Api.Application.UseCases.AssignRide
@@ -12,18 +11,15 @@ namespace ZM.DriverService.Api.Application.UseCases.AssignRide
     {
         private readonly IDriverRepository _driverRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IPublisher _publisher;
         private readonly IDateTimeProvider _dateTimeProvider;
 
         public AssignRideCommandHandler(
             IDriverRepository driverRepository,
             IUnitOfWork unitOfWork,
-            IPublisher publisher,
             IDateTimeProvider dateTimeProvider)
         {
             _driverRepository = driverRepository;
             _unitOfWork = unitOfWork;
-            _publisher = publisher;
             _dateTimeProvider = dateTimeProvider;
         }
 
@@ -43,9 +39,7 @@ namespace ZM.DriverService.Api.Application.UseCases.AssignRide
 
             await _driverRepository.UpdateDriverAsync(driver, cancellationToken);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            await _publisher.Publish(new RideAssignedDomainEvent(request.RideId, driver.Id), cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);            
 
             return Result.Success();
         }

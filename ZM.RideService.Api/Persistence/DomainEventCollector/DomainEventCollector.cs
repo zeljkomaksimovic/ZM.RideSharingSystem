@@ -1,7 +1,7 @@
-﻿using ZM.RideService.Api.Application.Outbox;
+﻿using ZM.RideService.Api.Application.DomainEventCollector;
 using ZM.RideService.Api.Domain.Primitives;
 
-namespace ZM.RideService.Api.Persistence.Outbox
+namespace ZM.RideService.Api.Persistence.DomainEventCollector
 {
     public class DomainEventCollector : IDomainEventCollector
     {
@@ -22,7 +22,7 @@ namespace ZM.RideService.Api.Persistence.Outbox
             return _domainEvents.AsReadOnly();
         }
 
-        public void ClearEvents()
+        public void ClearDomainEvents()
         {
             _domainEvents.Clear();
         }

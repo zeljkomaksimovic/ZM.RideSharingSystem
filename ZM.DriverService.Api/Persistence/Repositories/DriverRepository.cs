@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ZM.DriverService.Api.Application.DomainEventCollector;
 using ZM.DriverService.Api.Application.Repository;
 using ZM.DriverService.Api.Domain.Entities;
 using ZM.DriverService.Api.Domain.Enums;
@@ -9,13 +10,19 @@ namespace ZM.DriverService.Api.Persistence.Repositories
     public class DriverRepository : IDriverRepository
     {
         private readonly DriverDbContext _dbContext;
+        private readonly IDomainEventCollector _domainEventCollector;
 
-        public DriverRepository(DriverDbContext dbContext)
+        public DriverRepository(
+            DriverDbContext dbContext,
+            IDomainEventCollector domainEventCollector)
         {
             _dbContext = dbContext;
+            _domainEventCollector = domainEventCollector;
         }
 
-        public async Task CreateDriverAsync(Driver driver, CancellationToken cancellationToken = default)
+        public async Task CreateDriverAsync(
+            Driver driver,
+            CancellationToken cancellationToken = default)
         {
             var dbDriver = new Models.Driver
             {
@@ -27,15 +34,21 @@ namespace ZM.DriverService.Api.Persistence.Repositories
                 CurrentLatitude = driver.CurrentLocation?.Latitude,
                 CurrentLongitude = driver.CurrentLocation?.Longitude,
                 Status = driver.Status,
+                CurrentRideId = driver.CurrentRideId,
                 CreatedAtUtc = driver.CreatedAtUtc,
                 LastLocationUpdateAtUtc = driver.LastLocationUpdateAtUtc,
                 LastStatusChangeAtUtc = driver.LastStatusChangeAtUtc
             };
 
             await _dbContext.Drivers.AddAsync(dbDriver, cancellationToken);
+
+            _domainEventCollector.AddEvents(driver.DomainEvents);
+            driver.ClearDomainEvents();
         }
 
-        public async Task<Driver?> GetDriverByIdAsync(Guid driverId, CancellationToken cancellationToken = default)
+        public async Task<Driver?> GetDriverByIdAsync(
+            Guid driverId,
+            CancellationToken cancellationToken = default)
         {
             return await _dbContext.Drivers
                 .Where(d => d.Id == driverId)
@@ -45,23 +58,33 @@ namespace ZM.DriverService.Api.Persistence.Repositories
                     d.LastName,
                     d.Email,
                     d.PhoneNumber,
-                    d.CurrentLatitude.HasValue && d.CurrentLongitude.HasValue ?
-                        new DriverLocation(d.CurrentLatitude.Value, d.CurrentLongitude.Value) : null,
+                    d.CurrentLatitude.HasValue && d.CurrentLongitude.HasValue
+                        ? new DriverLocation(
+                            d.CurrentLatitude.Value,
+                            d.CurrentLongitude.Value)
+                        : null,
                     d.Status,
+                    d.CurrentRideId,
                     d.CreatedAtUtc,
                     d.LastLocationUpdateAtUtc,
                     d.LastStatusChangeAtUtc))
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<bool> DriverExistsAsync(Guid driverId, CancellationToken cancellationToken = default)
+        public async Task<bool> DriverExistsAsync(
+            Guid driverId,
+            CancellationToken cancellationToken = default)
         {
-            return await _dbContext.Drivers.AnyAsync(d => d.Id == driverId, cancellationToken);
+            return await _dbContext.Drivers
+                .AnyAsync(d => d.Id == driverId, cancellationToken);
         }
 
-        public async Task<bool> UpdateDriverAsync(Driver driver, CancellationToken cancellationToken = default)
+        public async Task<bool> UpdateDriverAsync(
+            Driver driver,
+            CancellationToken cancellationToken = default)
         {
-            var dbDriver = await _dbContext.Drivers.SingleOrDefaultAsync(d => d.Id == driver.Id, cancellationToken);
+            var dbDriver = await _dbContext.Drivers
+                .SingleOrDefaultAsync(d => d.Id == driver.Id, cancellationToken);
 
             if (dbDriver is null)
             {
@@ -79,10 +102,14 @@ namespace ZM.DriverService.Api.Persistence.Repositories
             dbDriver.LastLocationUpdateAtUtc = driver.LastLocationUpdateAtUtc;
             dbDriver.LastStatusChangeAtUtc = driver.LastStatusChangeAtUtc;
 
+            _domainEventCollector.AddEvents(driver.DomainEvents);
+            driver.ClearDomainEvents();
+
             return true;
         }
 
-        public async Task<IReadOnlyCollection<Driver>> GetAvailableDriversAsync(CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyCollection<Driver>> GetAvailableDriversAsync(
+            CancellationToken cancellationToken = default)
         {
             return await _dbContext.Drivers
                 .AsNoTracking()
@@ -93,9 +120,13 @@ namespace ZM.DriverService.Api.Persistence.Repositories
                     d.LastName,
                     d.Email,
                     d.PhoneNumber,
-                    d.CurrentLatitude.HasValue && d.CurrentLongitude.HasValue ?
-                        new DriverLocation(d.CurrentLatitude.Value, d.CurrentLongitude.Value) : null,
+                    d.CurrentLatitude.HasValue && d.CurrentLongitude.HasValue
+                        ? new DriverLocation(
+                            d.CurrentLatitude.Value,
+                            d.CurrentLongitude.Value)
+                        : null,
                     d.Status,
+                    d.CurrentRideId,
                     d.CreatedAtUtc,
                     d.LastLocationUpdateAtUtc,
                     d.LastStatusChangeAtUtc))
